@@ -1,0 +1,10 @@
+clingo version 5.6.2
+Reading from ./campionato.cl
+Solving...
+UNKNOWN
+
+INTERRUPTED  : 1
+Models       : 0+
+Calls        : 1
+Time         : 599.359s (Solving: 598.36s 1st Model: 0.00s Unsat: 0.00s)
+CPU Time     : 598.957s

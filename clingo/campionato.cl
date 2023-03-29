@@ -66,6 +66,7 @@ citta(heat, miami).
 citta(nuggets, denver).
 
 
+assegna(1,bulls,celtics).
 
 % OBBLIGATORIO 4
 

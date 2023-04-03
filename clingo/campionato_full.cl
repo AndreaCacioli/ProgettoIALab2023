@@ -9,6 +9,7 @@
 %%%     With 12 teams and 1 conflict  -  Execution time is around 11 seconds      %%%
 %%%     With 12 teams and 2 conflicts  -  Execution time is around 58 seconds     %%%
 %%%     With 14 teams and 1 conflict  -  Execution time is around 2 min: 33 sec   %%%
+%%%     With 20 teams and 1 conflict  -  Execution time is around 2 min: 33 sec   %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -86,11 +87,11 @@ partita(A, B) :- squadra(A), squadra(B), A != B.
 1 { assegna(G, Squadra1, Squadra2): giornata(G)  } 1 :- partita(Squadra1,Squadra2).
 
 % Can't have the same team play two different games (against different teams) on the same day
-% :- assegna(G, Squadra1, Squadra2), assegna(G, Squadra2, Squadra1).
-% :- assegna(G, Squadra1, Squadra2), assegna(G, Squadra1, Squadra3), Squadra2 != Squadra3.
-% :- assegna(G, Squadra2, Squadra1), assegna(G, Squadra3, Squadra1), Squadra2 != Squadra3.
-% :- assegna(G, Squadra2, Squadra1), assegna(G, Squadra1, Squadra3), Squadra2 != Squadra3.
-% :- assegna(G, Squadra1, Squadra2), assegna(G, Squadra3, Squadra1), Squadra2 != Squadra3.
+:- assegna(G, Squadra1, Squadra2), assegna(G, Squadra2, Squadra1).
+:- assegna(G, Squadra1, Squadra2), assegna(G, Squadra1, Squadra3), Squadra2 != Squadra3.
+:- assegna(G, Squadra2, Squadra1), assegna(G, Squadra3, Squadra1), Squadra2 != Squadra3.
+:- assegna(G, Squadra2, Squadra1), assegna(G, Squadra1, Squadra3), Squadra2 != Squadra3.
+:- assegna(G, Squadra1, Squadra2), assegna(G, Squadra3, Squadra1), Squadra2 != Squadra3.
 
 %  This one looks like the slower one ( about 30 times compared to the previous)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

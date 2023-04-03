@@ -72,18 +72,23 @@ assegna(1,bulls,celtics).
 
 partita(A, B) :- squadra(A), squadra(B), A != B.
 
+gioca(G, A) :- giornata(G), assegna(G,A,_).
+gioca(G, A) :- giornata(G), assegna(G,_,A).
+
+
 % Every match day has exactly 10 matches (NumeroSquadre / 2)
 7 { assegna(G, Squadra1, Squadra2): partita(Squadra1,Squadra2) } 7 :- giornata(G).
 
-% Every match is played only once
-1 { assegna(G, Squadra1, Squadra2): giornata(G)  } 1 :- partita(Squadra1,Squadra2).
+%1 { gioca(G,A): giornata(G) } 1 :- squadra(A).
+
+:- squadra(A), giornata(G), not gioca(G,A).
 
 % Can't have the same team play two different games (against different teams) on the same day
-:- assegna(G, Squadra1, Squadra2), assegna(G, Squadra2, Squadra1).
-:- assegna(G, Squadra1, Squadra2), assegna(G, Squadra1, Squadra3), Squadra2 != Squadra3.
-:- assegna(G, Squadra2, Squadra1), assegna(G, Squadra3, Squadra1), Squadra2 != Squadra3.
-:- assegna(G, Squadra2, Squadra1), assegna(G, Squadra1, Squadra3), Squadra2 != Squadra3.
-:- assegna(G, Squadra1, Squadra2), assegna(G, Squadra3, Squadra1), Squadra2 != Squadra3.
+% :- assegna(G, Squadra1, Squadra2), assegna(G, Squadra2, Squadra1).
+% :- assegna(G, Squadra1, Squadra2), assegna(G, Squadra1, Squadra3), Squadra2 != Squadra3.
+% :- assegna(G, Squadra2, Squadra1), assegna(G, Squadra3, Squadra1), Squadra2 != Squadra3.
+% :- assegna(G, Squadra2, Squadra1), assegna(G, Squadra1, Squadra3), Squadra2 != Squadra3.
+% :- assegna(G, Squadra1, Squadra2), assegna(G, Squadra3, Squadra1), Squadra2 != Squadra3.
 
 %  This one looks like the slower one ( about 30 times compared to the previous)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -114,6 +119,7 @@ partita(A, B) :- squadra(A), squadra(B), A != B.
 % FACOLTATIVO 1 
 
 % Cannot have more than 2 straight home games, same goes for away games
+% Vincolo che velocizza il tempo di esecuzione 🤔
 :- giornata(G), assegna(G, Squadra1, _), assegna(G+1, Squadra1, _), assegna(G+2, Squadra1, _).
 :- giornata(G), assegna(G, _, Squadra1), assegna(G+1, _, Squadra1), assegna(G+2, _, Squadra1).
 
@@ -122,6 +128,7 @@ partita(A, B) :- squadra(A), squadra(B), A != B.
 % FACOLTATIVO 2
 
 % La distanza tra due partite di andata e di ritorno deve essere di almeno 10 giornate (0.25 * numeroGiornate : parte intera)
+% Vincolo abbastanza pesante
 :- assegna(G1, Squadra1, Squadra2), assegna(G2, Squadra2, Squadra1), |G1 - G2| < 6.
 
 #show assegna/3.

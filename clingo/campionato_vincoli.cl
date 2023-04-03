@@ -1,9 +1,5 @@
 partita(A, B) :- squadra(A), squadra(B), A != B.
 
-gioca(G, A) :- giornata(G), assegna(G,A,_).
-gioca(G, A) :- giornata(G), assegna(G,_,A).
-
-:- squadra(A), giornata(G), not gioca(G,A).
 
 % Teams from the same city cannot have a home game contemporarily
 :- assegna(G, Squadra1, _), assegna(G, Squadra2, _), citta(Squadra1, C), citta(Squadra2, C), Squadra1 != Squadra2.
@@ -16,3 +12,17 @@ gioca(G, A) :- giornata(G), assegna(G,_,A).
 
 
 #show assegna/3.
+
+:- assegna(G, Squadra1, Squadra2), assegna(G, Squadra2, Squadra1).
+:- assegna(G, Squadra1, Squadra2), assegna(G, Squadra1, Squadra3), Squadra2 != Squadra3.
+:- assegna(G, Squadra2, Squadra1), assegna(G, Squadra3, Squadra1), Squadra2 != Squadra3.
+:- assegna(G, Squadra2, Squadra1), assegna(G, Squadra1, Squadra3), Squadra2 != Squadra3.
+:- assegna(G, Squadra1, Squadra2), assegna(G, Squadra3, Squadra1), Squadra2 != Squadra3.
+
+
+%%%%%%% UNUSED CONSTRAINTS %%%%%%%%%
+
+% gioca(G, A) :- giornata(G), assegna(G,A,_).
+% gioca(G, A) :- giornata(G), assegna(G,_,A).
+
+% :- squadra(A), giornata(G), not gioca(G,A).

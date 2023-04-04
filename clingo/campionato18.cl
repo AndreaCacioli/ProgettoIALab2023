@@ -43,8 +43,8 @@ citta(pelicans, new_orleans).
 assegna(1, bulls, celtics).
 
 % Le andate e i ritorni sono separati.
-:- assegna(G1, Squadra1, Squadra2), assegna(G2, Squadra2, Squadra1), G1 < 17, G2 < 17
-:- assegna(G1, Squadra1, Squadra2), assegna(G2, Squadra2, Squadra1), G1 > 17, G2 > 17
+:- assegna(G1, Squadra1, Squadra2), assegna(G2, Squadra2, Squadra1), G1 < 17, G2 < 17.
+:- assegna(G1, Squadra1, Squadra2), assegna(G2, Squadra2, Squadra1), G1 > 17, G2 > 17.
 
 % Every match day has exactly 10 matches (NumeroSquadre / 2)
 9 { assegna(G, Squadra1, Squadra2): partita(Squadra1,Squadra2) } 9 :- giornata(G).

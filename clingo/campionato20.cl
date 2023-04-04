@@ -47,8 +47,8 @@ citta(thunder, oklahoma_city).
 assegna(1, bulls, celtics).
 
 % Le andate e i ritorni sono separati.
-:- assegna(G1, Squadra1, Squadra2), assegna(G2, Squadra2, Squadra1), G1 < 19, G2 < 19
-:- assegna(G1, Squadra1, Squadra2), assegna(G2, Squadra2, Squadra1), G1 > 19, G2 > 19
+:- assegna(G1, Squadra1, Squadra2), assegna(G2, Squadra2, Squadra1), G1 < 19, G2 < 19.
+:- assegna(G1, Squadra1, Squadra2), assegna(G2, Squadra2, Squadra1), G1 > 19, G2 > 19.
 
 % Every match day has exactly 10 matches (NumeroSquadre / 2)
 10 { assegna(G, Squadra1, Squadra2): partita(Squadra1,Squadra2) } 10 :- giornata(G).

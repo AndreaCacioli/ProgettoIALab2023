@@ -57,6 +57,9 @@ citta(nuggets, denver).
 
 assegna(1,bulls,celtics).
 
+% Le andate e i ritorni sono separati.
+:- assegna(G1, Squadra1, Squadra2), assegna(G2, Squadra2, Squadra1), G1 < 13, G2 < 13
+:- assegna(G1, Squadra1, Squadra2), assegna(G2, Squadra2, Squadra1), G1 > 13, G2 > 13
 
 % Every match day has exactly 10 matches (NumeroSquadre / 2)
 7 { assegna(G, Squadra1, Squadra2): partita(Squadra1,Squadra2) } 7 :- giornata(G).

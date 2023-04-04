@@ -38,6 +38,10 @@ citta(bucks, milwaukee).
 
 assegna(1, bulls, celtics).
 
+% Le andate e i ritorni sono separati.
+:- assegna(G1, Squadra1, Squadra2), assegna(G2, Squadra2, Squadra1), G1 < 15, G2 < 15
+:- assegna(G1, Squadra1, Squadra2), assegna(G2, Squadra2, Squadra1), G1 > 15, G2 > 15
+
 % Every match day has exactly 10 matches (NumeroSquadre / 2)
 8 { assegna(G, Squadra1, Squadra2): partita(Squadra1,Squadra2) } 8 :- giornata(G).
 

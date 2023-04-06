@@ -27,13 +27,6 @@ squadra(pacers).
 squadra(heat).
 squadra(nuggets).
 
-%  squadra(grizzlies).
-%  squadra(bucks).
-%  squadra(timberwolves).
-%  squadra(pelicans).
-%  squadra(knicks).
-%  squadra(thunder).
-
 
 % 38 matches ( (NumeroSquadre - 1) * 2)
 giornata(1..26).

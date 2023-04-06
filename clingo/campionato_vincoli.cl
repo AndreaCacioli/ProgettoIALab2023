@@ -13,20 +13,21 @@ partita(A, B) :- squadra(A), squadra(B), A != B.
 
 #show assegna/3.
 
-:- assegna(G, Squadra1, Squadra2), assegna(G, Squadra2, Squadra1).
 :- assegna(G, Squadra1, Squadra2), assegna(G, Squadra1, Squadra3), Squadra2 != Squadra3.
 :- assegna(G, Squadra2, Squadra1), assegna(G, Squadra3, Squadra1), Squadra2 != Squadra3.
 :- assegna(G, Squadra2, Squadra1), assegna(G, Squadra1, Squadra3), Squadra2 != Squadra3.
-:- assegna(G, Squadra1, Squadra2), assegna(G, Squadra3, Squadra1), Squadra2 != Squadra3.
 
 
 %%%%%%% UNUSED CONSTRAINTS %%%%%%%%%
 
-% gioca(G, A) :- giornata(G), assegna(G,A,_).
-% gioca(G, A) :- giornata(G), assegna(G,_,A).
+% gioca(G, A) :- assegna(G,A,_).
+% gioca(G, A) :- assegna(G,_,A).
 
 % :- squadra(A), giornata(G), not gioca(G,A).
 
 %
 % Vincolo alternativo ad aggregato
 % :- assegna(G1, Squadra1, Squadra2), assegna(G2, Squadra1, Squadra2), G1 <> G2.
+
+% :- assegna(G, Squadra1, Squadra2), assegna(G, Squadra2, Squadra1).
+% :- assegna(G, Squadra1, Squadra2), assegna(G, Squadra3, Squadra1), Squadra2 != Squadra3.

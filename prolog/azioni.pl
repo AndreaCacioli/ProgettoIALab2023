@@ -36,3 +36,9 @@ trasforma(est, pos(Riga, Colonna), pos(Riga, ColonnaDestra)) :-
 trasforma(ovest, pos(Riga, Colonna), pos(Riga, ColonnaSinistra)) :-
   ColonnaSinistra is Colonna - 1 .
 
+%%%%%%%%%%%%%%  COSTI  %%%%%%%%%%%%%%%%%
+
+costo(nord, 1).
+costo(est, 1).
+costo(ovest, 1).
+costo(sud, 1).

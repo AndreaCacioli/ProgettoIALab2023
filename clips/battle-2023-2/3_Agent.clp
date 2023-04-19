@@ -10,8 +10,8 @@
 	(status (step ?s)(currently running))
 	(moves (fires 0) (guesses ?ng&:(> ?ng 0)))
 =>
-	(assert (exec (step ?s) (action guess) (x 0) (y 0)))
-     (pop-focus)
+  (assert (exec (step ?s) (action guess) (x 0) (y 0)))
+  (pop-focus)
 
 )
 
@@ -20,7 +20,7 @@
 	(moves (guesses 0))
 =>
 	(assert (exec (step ?s) (action unguess) (x 0) (y 0)))
-     (pop-focus)
+  (pop-focus)
 
 )
 
@@ -31,7 +31,7 @@
 	(not (exec  (action fire) (x 5) (y 4)) )
 =>
 	(assert (exec (step ?s) (action fire) (x 5) (y 4)))
-     (pop-focus)
+  (pop-focus)
 )
 
 (defrule inerzia-a

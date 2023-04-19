@@ -132,7 +132,6 @@
 
 	(cell (x ?x) (y ?y) (status guessed))
 	(boat-hor (name ?n) (x ?x) (ys $? ?y $?) (size ?s) (status $?ss))
-        fsol
 	(or 
 		(and (test (eq ?s 1))
 		     (test (subsetp $?ss (create$ hit)))

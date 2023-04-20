@@ -5,4 +5,4 @@
 (load MyStupidAgent.clp)
 (reset)
 (set-break game-over)
-(run 20)
+(run)

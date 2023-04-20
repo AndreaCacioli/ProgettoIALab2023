@@ -30,7 +30,6 @@
   (retract ?guess)
   (assert (guessed (x ?x) (y ?y)))
   (assert (exec (step ?s) (action guess) (x ?x) (y ?y)))
-	(printout t "Guessed [" ?x ", " ?y "] and popped from the queue." crlf)
   (pop-focus)
 )
 
@@ -48,7 +47,7 @@
   (assert (guess-queue (x ?x) (y ?y)))
   (assert (guess-queue (x (- ?x 1)) (y ?y)))
   (assert (guess-queue (x (+ ?x 1)) (y ?y)))
-	(printout t "Added [" ?x ", " ?y "] to the queue and the one above and below " crlf)
+	(printout t "Added [" ?x ", " ?y "] to the queue and the one above and below" crlf)
 )
 
 ;boat with a middle piece on the left side
@@ -60,7 +59,7 @@
   (assert (guess-queue (x ?x) (y 0)))
   (assert (guess-queue (x (- ?x 1)) (y 0)))
   (assert (guess-queue (x (+ ?x 1)) (y 0)))
-	(printout t "Added [" ?x ", " 0 "] to the queue and the one above and below " crlf)
+	(printout t "Added [" ?x ", " 0 "] to the queue and the one above and below" crlf)
 )
 
 ;boat with a middle piece on the top
@@ -72,7 +71,7 @@
   (assert (guess-queue (x 0) (y (- ?y 1))))
   (assert (guess-queue (x 0) (y ?y)))
   (assert (guess-queue (x 0) (y (+ ?y 1))))
-	(printout t "Added [" 0 ", " ?y "] to the queue and the one left and right " crlf)
+	(printout t "Added [" 0 ", " ?y "] to the queue and the one left and right" crlf)
 )
 
 
@@ -86,7 +85,7 @@
   (assert (guess-queue (x ?x) (y (- ?y 1))))
   (assert (guess-queue (x ?x) (y ?y)))
   (assert (guess-queue (x ?x) (y (+ ?y 1))))
-	(printout t "Added [" ?x ", " ?y "] to the queue and the one left and right " crlf)
+	(printout t "Added [" ?x ", " ?y "] to the queue and the one left and right" crlf)
 )
 
 ;TODO reason about a middle piece in the middle of the board
@@ -104,7 +103,7 @@
   (retract ?info)
   (assert (guess-queue (x ?x) (y ?y)))
   (assert (guess-queue (x (+ ?x 1)) (y ?y)))
-	(printout t "Added [" ?x ", " ?y "] to the queue and the one below " crlf)
+	(printout t "Added [" ?x ", " ?y "] to the queue and the one below" crlf)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -120,8 +119,48 @@
   (retract ?info)
   (assert (guess-queue (x ?x) (y ?y)))
   (assert (guess-queue (x (- ?x 1)) (y ?y)))
-	(printout t "Added [" ?x ", " ?y "] to the queue and the one above " crlf)
+	(printout t "Added [" ?x ", " ?y "] to the queue and the one above" crlf)
 )
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;; LEFT PIECES ;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;Every bottom piece surely has one above
+;TODO It could have two or three
+(defrule left
+	(status (step ?s)(currently running))
+  ?info <- (k-cell (x ?x) (y ?y) (content left))
+=> 
+  (retract ?info)
+  (assert (guess-queue (x ?x) (y ?y)))
+  (assert (guess-queue (x ?x) (y (+ ?y 1))))
+	(printout t "Added [" ?x ", " ?y "] to the queue and the one right" crlf)
+)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;; RIGHT PIECES ;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;Every bottom piece surely has one above
+;TODO It could have two or three
+(defrule right
+	(status (step ?s)(currently running))
+  ?info <- (k-cell (x ?x) (y ?y) (content right))
+=> 
+  (retract ?info)
+  (assert (guess-queue (x ?x) (y ?y)))
+  (assert (guess-queue (x ?x) (y (- ?y 1))))
+	(printout t "Added [" ?x ", " ?y "] to the queue and the one left" crlf)
+)
+
+
+
+
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;; STOPPING RULES ;;;;;;;;;;;;;;;;;;;
@@ -132,5 +171,22 @@
   (status (step ?m) (currently running))
 =>
   (assert (exec (step ?m) (action solve)))
-  (focus ENV)
+  (pop-focus)
 )
+
+(defrule finished-moves
+  (moves (fires 0) (guesses 0))
+  (status (step ?m) (currently running))
+=>
+  (assert (exec (step ?m) (action solve)))
+  (pop-focus)
+)
+
+(defrule nothing-else-to-do (declare (salience -500))
+  (status (step ?m) (currently running))
+=>
+  (printout t "Quitting because nothing else to do" crlf)
+  (assert (exec (step ?m) (action solve)))
+  (pop-focus)
+)
+

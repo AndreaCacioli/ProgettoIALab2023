@@ -152,7 +152,75 @@
 	(printout t "Added [" ?x ", " ?y "] to the queue and the one left and right" crlf)
 )
 
-;TODO reason about a middle piece in the middle of the board
+; MIDDLE PIECES IN THE MIDDLE OF THE MAP
+;;TODO You should probably refactor this code and move the action to a function to avoid code duplication
+(defrule mm-water-above 
+	(status (step ?s)(currently running))
+  ?info <- (k-cell (x ?x) (y ?y) (content middle))
+  (water (x ?x1&:(= ?x1 (- ?x 1))) (y ?y))
+=>
+  ;Do the same as the middle piece on the top
+  (retract ?info)
+  (assert (guess-queue (x 0) (y (- ?y 1))))
+  (assert (guess-queue (x 0) (y ?y)))
+  (assert (guess-queue (x 0) (y (+ ?y 1))))
+  ;below side is water
+  (assert (water (x 1) (y (- ?y 1))))
+  (assert (water (x 1) (y (+ ?y 1))))
+  (assert (water (x 1) (y  ?y)))
+	(printout t "Added [" 0 ", " ?y "] to the queue and the one left and right" crlf)
+)
+
+(defrule mm-water-below 
+	(status (step ?s)(currently running))
+  ?info <- (k-cell (x ?x) (y ?y) (content middle))
+  (water (x ?x1&:(= ?x1 (+ ?x 1))) (y ?y))
+=>
+  ;Do the same as the middle piece on the bottom
+  (retract ?info)
+  (assert (guess-queue (x ?x) (y (- ?y 1))))
+  (assert (guess-queue (x ?x) (y ?y)))
+  (assert (guess-queue (x ?x) (y (+ ?y 1))))
+  ;above side is water
+  (assert (water (x (- ?x 1)) (y (- ?y 1))))
+  (assert (water (x (- ?x 1)) (y (+ ?y 1))))
+  (assert (water (x (- ?x 1)) (y  ?y)))
+	(printout t "Added [" ?x ", " ?y "] to the queue and the one left and right" crlf)
+)
+
+(defrule mm-water-left 
+	(status (step ?s)(currently running))
+  ?info <- (k-cell (x ?x) (y ?y) (content middle))
+  (water (x ?x) (y ?y1&:(= ?y1 (- ?y 1))))
+=>
+  ;Do the same as the middle piece on the left
+  (retract ?info)
+  (assert (guess-queue (x ?x) (y 0)))
+  (assert (guess-queue (x (- ?x 1)) (y 0)))
+  (assert (guess-queue (x (+ ?x 1)) (y 0)))
+  ;right side is water
+  (assert (water (x ?x) (y 1)))
+  (assert (water (x (- ?x 1)) (y 1)))
+  (assert (water (x (+ ?x 1)) (y 1)))
+	(printout t "Added [" ?x ", " 0 "] to the queue and the one above and below" crlf)
+)
+
+(defrule mm-water-right 
+	(status (step ?s)(currently running))
+  ?info <- (k-cell (x ?x) (y ?y) (content middle))
+  (water (x ?x) (y ?y1&:(= ?y1 (+ ?y 1))))
+=>
+  ;Do the same as the middle piece on the right
+  (retract ?info)
+  (assert (guess-queue (x ?x) (y ?y)))
+  (assert (guess-queue (x (- ?x 1)) (y ?y)))
+  (assert (guess-queue (x (+ ?x 1)) (y ?y)))
+  ;left side is water
+  (assert (water (x ?x) (y (- ?y 1))))
+  (assert (water (x (- ?x 1)) (y (- ?y 1))))
+  (assert (water (x (+ ?x 1)) (y (- ?y 1))))
+	(printout t "Added [" ?x ", " ?y "] to the queue and the one above and below" crlf)
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;; TOP PIECES ;;;;;;;;;;;;;;;;;;;;;;;

@@ -112,10 +112,10 @@
   (assert (guess-queue (x (- ?x 1)) (y 0)))
   (assert (guess-queue (x (+ ?x 1)) (y 0)))
   ;right side is water
-  (assert (water (x ?x) (y (+ ?y 1))))
-  (assert (water (x (- ?x 1)) (y (+ ?y 1))))
-  (assert (water (x (+ ?x 1)) (y (+ ?y 1))))
-	(printout t "Added [" ?x ", " 0 "] to the queue and the one above and below " crlf)
+  (assert (water (x ?x) (y 1)))
+  (assert (water (x (- ?x 1)) (y 1)))
+  (assert (water (x (+ ?x 1)) (y 1)))
+	(printout t "Added [" ?x ", " 0 "] to the queue and the one above and below" crlf)
 )
 
 ;boat with a middle piece on the top
@@ -128,9 +128,9 @@
   (assert (guess-queue (x 0) (y ?y)))
   (assert (guess-queue (x 0) (y (+ ?y 1))))
   ;below side is water
-  (assert (water (x (+ ?x 1)) (y (- ?y 1))))
-  (assert (water (x (+ ?x 1)) (y (+ ?y 1))))
-  (assert (water (x (+ ?x 1)) (y  ?y)))
+  (assert (water (x 1) (y (- ?y 1))))
+  (assert (water (x 1) (y (+ ?y 1))))
+  (assert (water (x 1) (y  ?y)))
 	(printout t "Added [" 0 ", " ?y "] to the queue and the one left and right" crlf)
 )
 
@@ -208,6 +208,10 @@
   (retract ?info)
   (assert (guess-queue (x ?x) (y ?y)))
   (assert (guess-queue (x ?x) (y (+ ?y 1))))
+  ;Water all around (No Corners)
+  (assert (water (x (+ ?x 1)) (y ?y)))
+  (assert (water (x (- ?x 1)) (y ?y)))
+  (assert (water (x ?x) (y (- ?y 1))))
 	(printout t "Added [" ?x ", " ?y "] to the queue and the one right" crlf)
 )
 
@@ -225,6 +229,10 @@
   (retract ?info)
   (assert (guess-queue (x ?x) (y ?y)))
   (assert (guess-queue (x ?x) (y (- ?y 1))))
+  ;Water all around (No Corners)
+  (assert (water (x (+ ?x 1)) (y ?y)))
+  (assert (water (x (- ?x 1)) (y ?y)))
+  (assert (water (x ?x) (y (+ ?y 1))))
 	(printout t "Added [" ?x ", " ?y "] to the queue and the one left" crlf)
 )
 

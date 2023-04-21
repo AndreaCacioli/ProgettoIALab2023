@@ -7,6 +7,11 @@
   (slot y)
 )
 
+(deftemplate water
+  (slot x)
+  (slot y)
+)
+
 (deffacts board-size
   (rows 9)
   (columns 9)
@@ -33,6 +38,49 @@
   (pop-focus)
 )
 
+;If we already used information on a cell we do not use it again
+(defrule information-already-used
+  ?guess <- (guess-queue (x ?x) (y ?y))
+  (guessed (x ?x) (y ?y))
+=> 
+  (retract ?guess)
+	(printout t "Duplicate guess information [" ?x ", " ?y "] and popped from the queue." crlf)
+)
+
+;Automatically spawn water information when fire goes bad
+(defrule spawn-water
+  ?command <- (exec (action fire) (x ?x) (y ?y))
+  (not (k-cell (x ?x) (y ?y)))
+=>
+  (retract ?command)
+  (assert (water (x ?x) (y ?y)))
+	(printout t "Fire action produced a water element [" ?x ", " ?y "]" crlf)
+)
+
+;Automatically remove water information if we asserted out of bounds
+(defrule clean-water-x0
+  ?waterfact <- (water (x ?x&:(< ?x 0)))
+=>
+  (retract ?waterfact)
+)
+(defrule clean-water-xrows
+  (rows ?rows)
+  ?waterfact <- (water (x ?x&:(> ?x ?rows)))
+=>
+  (retract ?waterfact)
+)
+(defrule clean-water-y0
+  ?waterfact <- (water (y ?y&:(< ?y 0)))
+=>
+  (retract ?waterfact)
+)
+(defrule clean-water-ycols
+  (columns ?cols)
+  ?waterfact <- (water (y ?y&:(> ?y ?cols)))
+=>
+  (retract ?waterfact)
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;; MIDDLE PIECES ;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -47,6 +95,10 @@
   (assert (guess-queue (x ?x) (y ?y)))
   (assert (guess-queue (x (- ?x 1)) (y ?y)))
   (assert (guess-queue (x (+ ?x 1)) (y ?y)))
+  ;left side is water
+  (assert (water (x ?x) (y (- ?y 1))))
+  (assert (water (x (- ?x 1)) (y (- ?y 1))))
+  (assert (water (x (+ ?x 1)) (y (- ?y 1))))
 	(printout t "Added [" ?x ", " ?y "] to the queue and the one above and below" crlf)
 )
 
@@ -59,7 +111,11 @@
   (assert (guess-queue (x ?x) (y 0)))
   (assert (guess-queue (x (- ?x 1)) (y 0)))
   (assert (guess-queue (x (+ ?x 1)) (y 0)))
-	(printout t "Added [" ?x ", " 0 "] to the queue and the one above and below" crlf)
+  ;right side is water
+  (assert (water (x ?x) (y (+ ?y 1))))
+  (assert (water (x (- ?x 1)) (y (+ ?y 1))))
+  (assert (water (x (+ ?x 1)) (y (+ ?y 1))))
+	(printout t "Added [" ?x ", " 0 "] to the queue and the one above and below " crlf)
 )
 
 ;boat with a middle piece on the top
@@ -71,6 +127,10 @@
   (assert (guess-queue (x 0) (y (- ?y 1))))
   (assert (guess-queue (x 0) (y ?y)))
   (assert (guess-queue (x 0) (y (+ ?y 1))))
+  ;below side is water
+  (assert (water (x (+ ?x 1)) (y (- ?y 1))))
+  (assert (water (x (+ ?x 1)) (y (+ ?y 1))))
+  (assert (water (x (+ ?x 1)) (y  ?y)))
 	(printout t "Added [" 0 ", " ?y "] to the queue and the one left and right" crlf)
 )
 
@@ -85,6 +145,10 @@
   (assert (guess-queue (x ?x) (y (- ?y 1))))
   (assert (guess-queue (x ?x) (y ?y)))
   (assert (guess-queue (x ?x) (y (+ ?y 1))))
+  ;above side is water
+  (assert (water (x (- ?x 1)) (y (- ?y 1))))
+  (assert (water (x (- ?x 1)) (y (+ ?y 1))))
+  (assert (water (x (- ?x 1)) (y  ?y)))
 	(printout t "Added [" ?x ", " ?y "] to the queue and the one left and right" crlf)
 )
 
@@ -103,6 +167,10 @@
   (retract ?info)
   (assert (guess-queue (x ?x) (y ?y)))
   (assert (guess-queue (x (+ ?x 1)) (y ?y)))
+  ;Water all around (No Corners)
+  (assert (water (x ?x) (y (- ?y 1))))
+  (assert (water (x ?x) (y (+ ?y 1))))
+  (assert (water (x (- ?x 1)) (y ?y)))
 	(printout t "Added [" ?x ", " ?y "] to the queue and the one below" crlf)
 )
 
@@ -119,6 +187,10 @@
   (retract ?info)
   (assert (guess-queue (x ?x) (y ?y)))
   (assert (guess-queue (x (- ?x 1)) (y ?y)))
+  ;Water all around (No Corners)
+  (assert (water (x ?x) (y (- ?y 1))))
+  (assert (water (x ?x) (y (+ ?y 1))))
+  (assert (water (x (+ ?x 1)) (y ?y)))
 	(printout t "Added [" ?x ", " ?y "] to the queue and the one above" crlf)
 )
 
@@ -171,7 +243,6 @@
   (status (step ?m) (currently running))
 =>
   (assert (exec (step ?m) (action solve)))
-  (pop-focus)
 )
 
 (defrule finished-moves

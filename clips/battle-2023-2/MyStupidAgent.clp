@@ -7,7 +7,31 @@
   (slot y)
 )
 
+(deftemplate fired 
+  (slot x)
+  (slot y)
+)
+
 (deftemplate water
+  (slot x)
+  (slot y)
+)
+
+(deftemplate plausible-cell
+  (slot x)
+  (slot y)
+)
+
+;Very useful template used to spare some fires if we are lucky and immediately fire on a part of the boat
+(deftemplate one-or-the-other
+  (slot x1)
+  (slot y1)
+
+  (slot x2)
+  (slot y2)
+)
+
+(deftemplate guess-queue
   (slot x)
   (slot y)
 )
@@ -20,10 +44,40 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;; HANDLING QUEUES ;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defrule fire-plausible-cells (declare (salience -10))
+  ?plausibleFact <- (plausible-cell (x ?x) (y ?y))
+  (not (fired (x ?x) (y ?y)))
+	(status (step ?s)(currently running))
+=>
+  (retract ?plausibleFact)
+  (assert (exec (step ?s) (action fire) (x ?x) (y ?y)))
+  (assert (fired (x ?x) (y ?y)))
+  (printout t "Fired [" ?x ", " ?y "] as it was plausible" crlf)
+  (pop-focus)
+)
 
-(deftemplate guess-queue
-  (slot x)
-  (slot y)
+;Important rule to spare some fires
+(defrule found-one-remove-the-other1 (declare (salience 15))
+ (fired (x ?x) (y ?y)) 
+ (k-cell (x ?x) (y ?y) (content ~water))
+ ?noNeed <- (one-or-the-other (x1 ?x) (y1 ?y) (x2 ?x2) (y2 ?y2))
+ ?notPlausible <- (plausible-cell (x ?x2) (y ?y2))
+=>
+  (retract ?notPlausible)
+  (retract ?noNeed)
+  (assert (water (x ?x2) (y ?y2)))
+)
+
+;Important rule to spare some fires
+(defrule found-one-remove-the-other1 (declare (salience 15))
+ (fired (x ?x) (y ?y)) 
+ (k-cell (x ?x) (y ?y) (content ~water))
+ ?noNeed <- (one-or-the-other (x1 ?x1) (y1 ?y1) (x2 ?x) (y2 ?y))
+ ?notPlausible <- (plausible-cell (x ?x1) (y ?y1))
+=>
+  (retract ?notPlausible)
+  (retract ?noNeed)
+  (assert (water (x ?x1) (y ?y1)))
 )
 
 ;Automatically dequeue guesses
@@ -51,13 +105,14 @@
 (defrule spawn-water
   ?command <- (exec (action fire) (x ?x) (y ?y))
   (not (k-cell (x ?x) (y ?y)))
+  (not (guessed (x ?x) (y ?y)))
 =>
   (retract ?command)
   (assert (water (x ?x) (y ?y)))
 	(printout t "Fire action produced a water element [" ?x ", " ?y "]" crlf)
 )
 
-;Automatically remove water information if we asserted out of bounds
+;automatically remove water information if we asserted out of bounds
 (defrule clean-water-x0
   ?waterfact <- (water (x ?x&:(< ?x 0)))
 =>
@@ -81,6 +136,60 @@
   (retract ?waterfact)
 )
 
+;automatically remove plausible information if we asserted out of bounds
+(defrule clean-plausible-x0
+  ?plausible <- (plausible-cell (x ?x&:(< ?x 0)))
+=>
+  (retract ?plausible)
+)
+(defrule clean-plausible-xrows
+  (rows ?rows)
+  ?plausible <- (plausible-cell (x ?x&:(> ?x ?rows)))
+=>
+  (retract ?plausible)
+)
+(defrule clean-plausible-y0
+  ?plausible <- (plausible-cell (y ?y&:(< ?y 0)))
+=>
+  (retract ?plausible)
+)
+(defrule clean-plausible-ycols
+  (columns ?cols)
+  ?plausible <- (plausible-cell (y ?y&:(> ?y ?cols)))
+=>
+  (retract ?plausible)
+)
+
+(defrule clean-one-or-the-other-1 (declare (salience -5))
+  ?one <- (one-or-the-other
+    (x1 ?x1)
+    (y1 ?y1)
+
+    (x2 ?x2)
+    (y2 ?y2)
+  )
+  (plausible-cell (x ?x1) (y ?y1))
+  (not (plausible-cell (x ?x2) (y ?y2)))
+=> 
+  (retract ?one)
+  (printout t "Cannot have a one-or-the-other fact without the two relative plausible-cell facts" crlf)
+)
+
+(defrule clean-one-or-the-other-2 (declare (salience -5))
+  ?one <- (one-or-the-other
+    (x1 ?x1)
+    (y1 ?y1)
+
+    (x2 ?x2)
+    (y2 ?y2)
+  )
+  (plausible-cell (x ?x2) (y ?y2))
+  (not (plausible-cell (x ?x1) (y ?y1)))
+=> 
+  (retract ?one)
+  (printout t "Cannot have a one-or-the-other fact without the two relative plausible-cell facts" crlf)
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;; MIDDLE PIECES ;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -99,6 +208,13 @@
   (assert (water (x ?x) (y (- ?y 1))))
   (assert (water (x (- ?x 1)) (y (- ?y 1))))
   (assert (water (x (+ ?x 1)) (y (- ?y 1))))
+  ;we might have a 4 length so it is plausible to add either (x - 2) or (x + 2)
+  (assert (plausible-cell (x (- ?x 2))(y ?y)))
+  (assert (plausible-cell (x (+ ?x 2))(y ?y)))
+  (assert (one-or-the-other 
+    (x1 (- ?x 2)) (y1 ?y)
+    (x2 (+ ?x 2)) (y2 ?y)
+  ))
 	(printout t "Added [" ?x ", " ?y "] to the queue and the one above and below" crlf)
 )
 

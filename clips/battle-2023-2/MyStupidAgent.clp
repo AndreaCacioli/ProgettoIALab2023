@@ -481,6 +481,91 @@
 	(printout t "Added [" ?x ", " ?y "] to the GUESS queue and the one left" crlf)
 )
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;; k-per FACTS ;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;First of all we need a way to represent a cell on the board, we do it parametrically with these rules
+(deftemplate cell
+  (slot x)
+  (slot y)
+)
+
+(defrule cell-from-board-size
+  (rows ?rows) 
+  (columns ?cols)
+=>
+  (assert (cell (x ?rows) (y ?cols)))
+)
+(defrule cell-from-cell
+  (cell (x ?x&:(> ?x 0)) (y ?y&:(> ?y 0)))
+=>
+  (assert (cell (x (- ?x 1)) (y ?y)))
+  (assert (cell (x ?x) (y (- ?y 1))))
+  (assert (cell (x (- ?x 1)) (y (- ?y 1))))
+)
+
+;We want to calculate the probability of a cell of containing a boat
+;By default we know that we have k-per-row / board-size probability of hitting
+;Besides we can think about the information about already guessed cells and water cells
+
+(defrule translate-water
+  ?info <- (k-cell (x ?x) (y ?y) (content water))
+=> 
+  (assert (water (x ?x) (y ?y)))
+  (retract ?info)
+)
+
+(deftemplate water-per-row
+  (slot row)
+  (slot num)
+)
+
+(deftemplate water-per-col
+  (slot col)
+  (slot num)
+)
+
+(deftemplate counted
+  (slot x)
+  (slot y)
+)
+
+(deffacts water-pers
+  (water-per-row (row 0) (num 0))
+  (water-per-row (row 1) (num 0))
+  (water-per-row (row 2) (num 0))
+  (water-per-row (row 3) (num 0))
+  (water-per-row (row 4) (num 0))
+  (water-per-row (row 5) (num 0))
+  (water-per-row (row 6) (num 0))
+  (water-per-row (row 7) (num 0))
+  (water-per-row (row 8) (num 0))
+  (water-per-row (row 9) (num 0))
+  (water-per-col (col 0) (num 0))
+  (water-per-col (col 1) (num 0))
+  (water-per-col (col 2) (num 0))
+  (water-per-col (col 3) (num 0))
+  (water-per-col (col 4) (num 0))
+  (water-per-col (col 5) (num 0))
+  (water-per-col (col 6) (num 0))
+  (water-per-col (col 7) (num 0))
+  (water-per-col (col 8) (num 0))
+  (water-per-col (col 9) (num 0))
+)
+
+(defrule update-water-pers (declare (salience 20))
+  (water (x ?x) (y ?y))
+  ?wpr <- (water-per-row (row ?x) (num ?num1))
+  ?wpc <- (water-per-col (col ?y) (num ?num2))
+  (not (counted (x ?x) (y ?y)))
+=>
+  (modify ?wpr (num (+ ?num1 1)))
+  (modify ?wpc (num (+ ?num2 1)))
+  (assert (counted (x ?x) (y ?y)))
+)
+;For example if we know we have two boat pieces in a column, and we know the eight cells that contain water we can go ahead and guess those.
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;; STOPPING RULES ;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

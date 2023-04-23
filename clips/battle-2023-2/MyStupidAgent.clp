@@ -1,7 +1,5 @@
 (defmodule AGENT (import MAIN ?ALL) (import ENV ?ALL) (export ?ALL))
 
-;; TODO probably remove focus MAIN or focus ENV and replace with pop focus
-
 (deftemplate guessed 
   (slot x)
   (slot y)
@@ -45,6 +43,7 @@
 ;;;;;;;;;;;; HANDLING QUEUES ;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule fire-plausible-cells (declare (salience -10))
+  (moves (fires ?fires&:(> ?fires 0)))
   ?plausibleFact <- (plausible-cell (x ?x) (y ?y))
   (not (fired (x ?x) (y ?y)))
 	(status (step ?s)(currently running))
@@ -82,6 +81,7 @@
 
 ;Automatically dequeue guesses
 (defrule guess-from-queue (declare (salience 50))
+  (moves (guesses ?guesses&:(> ?guesses 0) ))
   ?guess <- (guess-queue (x ?x) (y ?y))
 	(status (step ?s)(currently running))
   (not (guessed (x ?x) (y ?y)))
@@ -172,7 +172,6 @@
   (not (plausible-cell (x ?x2) (y ?y2)))
 => 
   (retract ?one)
-  (printout t "Cannot have a one-or-the-other fact without the two relative plausible-cell facts" crlf)
 )
 
 (defrule clean-one-or-the-other-2 (declare (salience -5))
@@ -187,7 +186,14 @@
   (not (plausible-cell (x ?x1) (y ?y1)))
 => 
   (retract ?one)
-  (printout t "Cannot have a one-or-the-other fact without the two relative plausible-cell facts" crlf)
+)
+
+;Do not fire on already fired cells
+(defrule no-fire-on-fired
+ (fired (x ?x) (y ?y))
+ ?plausible <- (plausible-cell (x ?x) (y ?y))
+=>
+ (retract ?plausible)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -215,7 +221,7 @@
     (x1 (- ?x 2)) (y1 ?y)
     (x2 (+ ?x 2)) (y2 ?y)
   ))
-	(printout t "Added [" ?x ", " ?y "] to the queue and the one above and below" crlf)
+	(printout t "Added [" ?x ", " ?y "] to the GUESS queue and the one above and below" crlf)
 )
 
 ;boat with a middle piece on the left side
@@ -231,7 +237,14 @@
   (assert (water (x ?x) (y 1)))
   (assert (water (x (- ?x 1)) (y 1)))
   (assert (water (x (+ ?x 1)) (y 1)))
-	(printout t "Added [" ?x ", " 0 "] to the queue and the one above and below" crlf)
+  ;we might have a 4 length so it is plausible to add either (x - 2) or (x + 2)
+  (assert (plausible-cell (x (- ?x 2))(y 0)))
+  (assert (plausible-cell (x (+ ?x 2))(y 0)))
+  (assert (one-or-the-other 
+    (x1 (- ?x 2)) (y1 0)
+    (x2 (+ ?x 2)) (y2 0)
+  ))
+	(printout t "Added [" ?x ", " 0 "] to the GUESS queue and the one above and below" crlf)
 )
 
 ;boat with a middle piece on the top
@@ -247,7 +260,14 @@
   (assert (water (x 1) (y (- ?y 1))))
   (assert (water (x 1) (y (+ ?y 1))))
   (assert (water (x 1) (y  ?y)))
-	(printout t "Added [" 0 ", " ?y "] to the queue and the one left and right" crlf)
+  ;we might have a 4 length so it is plausible to add either (y - 2) or (y + 2)
+  (assert (plausible-cell (x 0)(y (- ?y 2))))
+  (assert (plausible-cell (x 0)(y (+ ?y 2))))
+  (assert (one-or-the-other 
+    (x1 0) (y1 (- ?y 2))
+    (x2 0) (y2 (+ ?y 2))
+  ))
+	(printout t "Added [" 0 ", " ?y "] to the GUESS queue and the one left and right" crlf)
 )
 
 
@@ -265,7 +285,14 @@
   (assert (water (x (- ?x 1)) (y (- ?y 1))))
   (assert (water (x (- ?x 1)) (y (+ ?y 1))))
   (assert (water (x (- ?x 1)) (y  ?y)))
-	(printout t "Added [" ?x ", " ?y "] to the queue and the one left and right" crlf)
+  ;we might have a 4 length so it is plausible to add either (y - 2) or (y + 2)
+  (assert (plausible-cell (x ?x)(y (- ?y 2))))
+  (assert (plausible-cell (x ?x)(y (+ ?y 2))))
+  (assert (one-or-the-other 
+    (x1 ?x) (y1 (- ?y 2))
+    (x2 ?x) (y2 (+ ?y 2))
+  ))
+	(printout t "Added [" ?x ", " ?y "] to the GUESS queue and the one left and right" crlf)
 )
 
 ; MIDDLE PIECES IN THE MIDDLE OF THE MAP
@@ -283,7 +310,14 @@
   (assert (water (x (+ ?x 1)) (y (- ?y 1))))
   (assert (water (x (+ ?x 1)) (y (+ ?y 1))))
   (assert (water (x (+ ?x 1)) (y  ?y)))
-	(printout t "Added [" 0 ", " ?y "] to the queue and the one left and right" crlf)
+  ;we might have a 4 length so it is plausible to add either (y - 2) or (y + 2)
+  (assert (plausible-cell (x ?x)(y (- ?y 2))))
+  (assert (plausible-cell (x ?x)(y (+ ?y 2))))
+  (assert (one-or-the-other 
+    (x1 ?x) (y1 (- ?y 2))
+    (x2 ?x) (y2 (+ ?y 2))
+  ))
+	(printout t "Added [" 0 ", " ?y "] to the GUESS queue and the one left and right" crlf)
 )
 
 (defrule middle-with-water-below 
@@ -300,7 +334,14 @@
   (assert (water (x (- ?x 1)) (y (- ?y 1))))
   (assert (water (x (- ?x 1)) (y (+ ?y 1))))
   (assert (water (x (- ?x 1)) (y  ?y)))
-	(printout t "Added [" ?x ", " ?y "] to the queue and the one left and right" crlf)
+  ;we might have a 4 length so it is plausible to add either (y - 2) or (y + 2)
+  (assert (plausible-cell (x ?x)(y (- ?y 2))))
+  (assert (plausible-cell (x ?x)(y (+ ?y 2))))
+  (assert (one-or-the-other 
+    (x1 ?x) (y1 (- ?y 2))
+    (x2 ?x) (y2 (+ ?y 2))
+  ))
+	(printout t "Added [" ?x ", " ?y "] to the GUESS queue and the one left and right" crlf)
 )
 
 (defrule middle-with-water-left 
@@ -317,7 +358,14 @@
   (assert (water (x ?x) (y (+ ?y 1))))
   (assert (water (x (- ?x 1)) (y (+ ?y 1))))
   (assert (water (x (+ ?x 1)) (y (+ ?y 1))))
-	(printout t "Added [" ?x ", " 0 "] to the queue and the one above and below" crlf)
+  ;we might have a 4 length so it is plausible to add either (x - 2) or (x + 2)
+  (assert (plausible-cell (x (- ?x 2))(y ?y)))
+  (assert (plausible-cell (x (+ ?x 2))(y ?y)))
+  (assert (one-or-the-other 
+    (x1 (- ?x 2)) (y1 ?y)
+    (x2 (+ ?x 2)) (y2 ?y)
+  ))
+	(printout t "Added [" ?x ", " 0 "] to the GUESS queue and the one above and below" crlf)
 )
 
 (defrule middle-with-water-right 
@@ -334,7 +382,14 @@
   (assert (water (x ?x) (y (- ?y 1))))
   (assert (water (x (- ?x 1)) (y (- ?y 1))))
   (assert (water (x (+ ?x 1)) (y (- ?y 1))))
-	(printout t "Added [" ?x ", " ?y "] to the queue and the one above and below" crlf)
+  ;we might have a 4 length so it is plausible to add either (x - 2) or (x + 2)
+  (assert (plausible-cell (x (- ?x 2))(y ?y)))
+  (assert (plausible-cell (x (+ ?x 2))(y ?y)))
+  (assert (one-or-the-other 
+    (x1 (- ?x 2)) (y1 ?y)
+    (x2 (+ ?x 2)) (y2 ?y)
+  ))
+	(printout t "Added [" ?x ", " ?y "] to the GUESS queue and the one above and below" crlf)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -342,7 +397,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Every top piece surely has one below
-;TODO It could have two or three
+;To avoid missing a fire we fire the one we already guessed and see if the boat ends there or it goes on
 (defrule top
 	(status (step ?s)(currently running))
   ?info <- (k-cell (x ?x) (y ?y) (content top))
@@ -354,7 +409,9 @@
   (assert (water (x ?x) (y (- ?y 1))))
   (assert (water (x ?x) (y (+ ?y 1))))
   (assert (water (x (- ?x 1)) (y ?y)))
-	(printout t "Added [" ?x ", " ?y "] to the queue and the one below" crlf)
+  ;We already know that this is a fire-ok but we might find a middle there
+  (assert (plausible-cell (x (+ ?x 1)) (y ?y)))
+	(printout t "Added [" ?x ", " ?y "] to the GUESS queue and the one below" crlf)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -362,7 +419,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Every bottom piece surely has one above
-;TODO It could have two or three
 (defrule bottom
 	(status (step ?s)(currently running))
   ?info <- (k-cell (x ?x) (y ?y) (content bot))
@@ -374,7 +430,9 @@
   (assert (water (x ?x) (y (- ?y 1))))
   (assert (water (x ?x) (y (+ ?y 1))))
   (assert (water (x (+ ?x 1)) (y ?y)))
-	(printout t "Added [" ?x ", " ?y "] to the queue and the one above" crlf)
+  ;We already know that this is a fire-ok but we might find a middle there
+  (assert (plausible-cell (x (- ?x 1)) (y ?y)))
+	(printout t "Added [" ?x ", " ?y "] to the GUESS queue and the one above" crlf)
 )
 
 
@@ -395,7 +453,9 @@
   (assert (water (x (+ ?x 1)) (y ?y)))
   (assert (water (x (- ?x 1)) (y ?y)))
   (assert (water (x ?x) (y (- ?y 1))))
-	(printout t "Added [" ?x ", " ?y "] to the queue and the one right" crlf)
+  ;We already know that this is a fire-ok but we might find a middle there
+  (assert (plausible-cell (x ?x) (y (+ ?y 1))))
+	(printout t "Added [" ?x ", " ?y "] to the GUESS queue and the one right" crlf)
 )
 
 
@@ -416,14 +476,10 @@
   (assert (water (x (+ ?x 1)) (y ?y)))
   (assert (water (x (- ?x 1)) (y ?y)))
   (assert (water (x ?x) (y (+ ?y 1))))
-	(printout t "Added [" ?x ", " ?y "] to the queue and the one left" crlf)
+  ;We already know that this is a fire-ok but we might find a middle there
+  (assert (plausible-cell (x ?x) (y (- ?y 1))))
+	(printout t "Added [" ?x ", " ?y "] to the GUESS queue and the one left" crlf)
 )
-
-
-
-
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;; STOPPING RULES ;;;;;;;;;;;;;;;;;;;

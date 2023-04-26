@@ -392,6 +392,9 @@
 	(printout t "Added [" ?x ", " ?y "] to the GUESS queue and the one above and below" crlf)
 )
 
+; A rule for the middle piece with no other information has not been used because deemed too costly in terms of moves
+; It is convenient to use probability instead
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;; TOP PIECES ;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

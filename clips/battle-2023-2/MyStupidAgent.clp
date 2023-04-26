@@ -491,13 +491,13 @@
   (slot y)
 )
 
-(defrule cell-from-board-size
+(defrule cell-from-board-size (declare (salience 100))
   (rows ?rows) 
   (columns ?cols)
 =>
   (assert (cell (x ?rows) (y ?cols)))
 )
-(defrule cell-from-cell
+(defrule cell-from-cell (declare (salience 100))
   (cell (x ?x&:(> ?x 0)) (y ?y&:(> ?y 0)))
 =>
   (assert (cell (x (- ?x 1)) (y ?y)))
@@ -516,55 +516,189 @@
   (retract ?info)
 )
 
-(deftemplate water-per-row
+(deftemplate known-cell-row
   (slot row)
   (slot num)
 )
 
-(deftemplate water-per-col
+(deftemplate known-cell-col
   (slot col)
   (slot num)
 )
+
+(deftemplate guessed-or-fired-row
+  (slot row)
+  (slot num)
+)
+
+(deftemplate guessed-or-fired-col
+  (slot col)
+  (slot num)
+)
+
 
 (deftemplate counted
   (slot x)
   (slot y)
 )
 
-(deffacts water-pers
-  (water-per-row (row 0) (num 0))
-  (water-per-row (row 1) (num 0))
-  (water-per-row (row 2) (num 0))
-  (water-per-row (row 3) (num 0))
-  (water-per-row (row 4) (num 0))
-  (water-per-row (row 5) (num 0))
-  (water-per-row (row 6) (num 0))
-  (water-per-row (row 7) (num 0))
-  (water-per-row (row 8) (num 0))
-  (water-per-row (row 9) (num 0))
-  (water-per-col (col 0) (num 0))
-  (water-per-col (col 1) (num 0))
-  (water-per-col (col 2) (num 0))
-  (water-per-col (col 3) (num 0))
-  (water-per-col (col 4) (num 0))
-  (water-per-col (col 5) (num 0))
-  (water-per-col (col 6) (num 0))
-  (water-per-col (col 7) (num 0))
-  (water-per-col (col 8) (num 0))
-  (water-per-col (col 9) (num 0))
+(deffacts known-facts
+  (known-cell-row (row 0) (num 0))
+  (known-cell-row (row 1) (num 0))
+  (known-cell-row (row 2) (num 0))
+  (known-cell-row (row 3) (num 0))
+  (known-cell-row (row 4) (num 0))
+  (known-cell-row (row 5) (num 0))
+  (known-cell-row (row 6) (num 0))
+  (known-cell-row (row 7) (num 0))
+  (known-cell-row (row 8) (num 0))
+  (known-cell-row (row 9) (num 0))
+  (known-cell-col (col 0) (num 0))
+  (known-cell-col (col 1) (num 0))
+  (known-cell-col (col 2) (num 0))
+  (known-cell-col (col 3) (num 0))
+  (known-cell-col (col 4) (num 0))
+  (known-cell-col (col 5) (num 0))
+  (known-cell-col (col 6) (num 0))
+  (known-cell-col (col 7) (num 0))
+  (known-cell-col (col 8) (num 0))
+  (known-cell-col (col 9) (num 0))
+
+  (guessed-or-fired-row (row 0) (num 0))
+  (guessed-or-fired-row (row 1) (num 0))
+  (guessed-or-fired-row (row 2) (num 0))
+  (guessed-or-fired-row (row 3) (num 0))
+  (guessed-or-fired-row (row 4) (num 0))
+  (guessed-or-fired-row (row 5) (num 0))
+  (guessed-or-fired-row (row 6) (num 0))
+  (guessed-or-fired-row (row 7) (num 0))
+  (guessed-or-fired-row (row 8) (num 0))
+  (guessed-or-fired-row (row 9) (num 0))
+  (guessed-or-fired-col (col 0) (num 0))
+  (guessed-or-fired-col (col 1) (num 0))
+  (guessed-or-fired-col (col 2) (num 0))
+  (guessed-or-fired-col (col 3) (num 0))
+  (guessed-or-fired-col (col 4) (num 0))
+  (guessed-or-fired-col (col 5) (num 0))
+  (guessed-or-fired-col (col 6) (num 0))
+  (guessed-or-fired-col (col 7) (num 0))
+  (guessed-or-fired-col (col 8) (num 0))
+  (guessed-or-fired-col (col 9) (num 0))
 )
 
-(defrule update-water-pers (declare (salience 20))
+(defrule update-water-known (declare (salience 20))
   (water (x ?x) (y ?y))
-  ?wpr <- (water-per-row (row ?x) (num ?num1))
-  ?wpc <- (water-per-col (col ?y) (num ?num2))
+  ?knownrow <- (known-cell-row (row ?x) (num ?num1))
+  ?knowncol <- (known-cell-col (col ?y) (num ?num2))
   (not (counted (x ?x) (y ?y)))
 =>
-  (modify ?wpr (num (+ ?num1 1)))
-  (modify ?wpc (num (+ ?num2 1)))
+  (modify ?knownrow (num (+ ?num1 1)))
+  (modify ?knowncol (num (+ ?num2 1)))
   (assert (counted (x ?x) (y ?y)))
 )
-;For example if we know we have two boat pieces in a column, and we know the eight cells that contain water we can go ahead and guess those.
+
+(defrule update-guessed-known (declare (salience 20))
+  (guessed (x ?x) (y ?y))
+  ?knownrow <- (known-cell-row (row ?x) (num ?num1))
+  ?knowncol <- (known-cell-col (col ?y) (num ?num2))
+  ?gofRow <- (guessed-or-fired-row (row ?x) (num ?numgof1))
+  ?gofCol <- (guessed-or-fired-col (col ?y) (num ?numgof2))
+  (not (counted (x ?x) (y ?y)))
+=>
+  (modify ?knownrow (num (+ ?num1 1)))
+  (modify ?knowncol (num (+ ?num2 1)))
+  (modify ?gofRow (num (+ ?numgof1 1)))
+  (modify ?gofCol (num (+ ?numgof2 1)))
+  (assert (counted (x ?x) (y ?y)))
+)
+
+(defrule update-fired-known (declare (salience 20))
+  (fired (x ?x) (y ?y))
+  ?knownrow <- (known-cell-row (row ?x) (num ?num1))
+  ?knowncol <- (known-cell-col (col ?y) (num ?num2))
+  ?gofRow <- (guessed-or-fired-row (row ?x) (num ?numgof1))
+  ?gofCol <- (guessed-or-fired-col (col ?y) (num ?numgof2))
+  (not (counted (x ?x) (y ?y)))
+=>
+  (modify ?knownrow (num (+ ?num1 1)))
+  (modify ?knowncol (num (+ ?num2 1)))
+  (modify ?gofRow (num (+ ?numgof1 1)))
+  (modify ?gofCol (num (+ ?numgof2 1)))
+  (assert (counted (x ?x) (y ?y)))
+)
+
+(deftemplate probability
+  (slot x)
+  (slot y)
+  (slot prob)
+)
+
+(defrule assign-probability (declare (salience -20)) 
+  (cell (x ?x) (y ?y))
+  (not (fired (x ?x) (y ?y)))
+  (not (guessed(x ?y) (y ?y)))
+  (not (water(x ?y) (y ?y)))
+  (k-per-col (col ?y) (num ?countCol))
+  (k-per-row (row ?x) (num ?countRow))
+
+  (known-cell-col (col ?y) (num ?knownCol))
+  (known-cell-row (row ?x) (num ?knownRow))
+  (guessed-or-fired-col (col ?y) (num ?gofCol))
+  (guessed-or-fired-row (row ?x) (num ?gofRow))
+=>
+  ;probability is ((countCol + countRow) - (guessesOrFiresRow + guessesOrFiresCol)) / (19 - (knownCol + knownRow))
+  (assert (probability (x ?x) (y ?y) (prob (/ (- (+ ?countCol ?countRow) (+ ?gofCol ?gofRow)) (- 19 (+ ?knownCol ?knownRow))))))
+)
+
+;If a cell has a probability of one we immediately guess it
+(defrule probabiliyOne (declare (salience 60))
+  (probability (x ?x) (y ?y) (prob 1))
+=>
+  (assert (guess-queue) (x ?x) (y ?y))
+)
+;In all other cases, if we  have fires, we fire the most probable one
+;And if we do not have fires we guess the most probable one
+(deftemplate mostProbable
+  (slot x)
+  (slot y)
+  (slot prob)
+)
+(deffacts mostProbableFact
+  (mostProbable (x 0) (y 0) (prob 0))
+)
+
+(defrule find-most-probable (declare (salience -20))
+  ?mostProbable <- (mostProbable (x ?x) (y ?y) (prob ?highestProb))
+  (probability (x ?x1) (y ?y1) (prob ?higherProb&:(> ?higherProb ?highestProb)))
+  (not (guessed (x ?x1) (y ?y1)))
+  (not (fired (x ?x1) (y ?y1)))
+  (not (water (x ?x1) (y ?y1)))
+=>
+  (printout t "updating mostProbable, it is now [" ?x1 ", " ?y1 "]" crlf)
+  (modify ?mostProbable (x ?x1) (y ?y1) (prob ?higherProb))
+)
+
+(defrule fire-most-probable-if-possible (declare (salience -25))
+  (moves (fires ?f&:(> ?f 0)))
+  ?mostProbable <- (mostProbable (x ?x) (y ?y))
+=>
+  (retract ?mostProbable)
+  (assert (mostProbable (x 0) (y 0) (prob 0)))
+  (printout t "Restarting mostProbable calculation" crlf)
+  (assert (plausible-cell (x ?x) (y ?y)))
+)
+
+(defrule guess-most-probable (declare (salience -25))
+  (moves (fires 0) (guesses ?g&:(> ?g 0)))
+  ?mostProbable <- (mostProbable (x ?x) (y ?y))
+=>
+  (retract ?mostProbable)
+  (assert (mostProbable (x 0) (y 0) (prob 0)))
+  (printout t "Restarting mostProbable calculation" crlf)
+  (assert (guess-queue (x ?x) (y ?y)))
+)
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;; STOPPING RULES ;;;;;;;;;;;;;;;;;;;

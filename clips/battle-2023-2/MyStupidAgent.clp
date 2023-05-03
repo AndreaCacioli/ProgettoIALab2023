@@ -444,7 +444,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Every bottom piece surely has one above
-;TODO It could have two or three
 (defrule left
 	(status (step ?s)(currently running))
   ?info <- (k-cell (x ?x) (y ?y) (content left))
@@ -467,7 +466,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;Every bottom piece surely has one above
-;TODO It could have two or three
 (defrule right
 	(status (step ?s)(currently running))
   ?info <- (k-cell (x ?x) (y ?y) (content right))

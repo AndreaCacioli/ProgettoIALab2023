@@ -659,47 +659,24 @@
 )
 ;In all other cases, if we  have fires, we fire the most probable one
 ;And if we do not have fires we guess the most probable one
-(deftemplate mostProbable
-  (slot x)
-  (slot y)
-  (slot prob)
-)
-(deffacts mostProbableFact
-  (mostProbable (x 0) (y 0) (prob 0))
-)
-
-(defrule find-most-probable (declare (salience -20))
-  ?mostProbable <- (mostProbable (x ?x) (y ?y) (prob ?highestProb))
-  (probability (x ?x1) (y ?y1) (prob ?higherProb&:(> ?higherProb ?highestProb)))
-  (not (guessed (x ?x1) (y ?y1)))
-  (not (fired (x ?x1) (y ?y1)))
-  (not (water (x ?x1) (y ?y1)))
-=>
-  (printout t "updating mostProbable, it is now [" ?x1 ", " ?y1 "]" crlf)
-  (modify ?mostProbable (x ?x1) (y ?y1) (prob ?higherProb))
-)
 
 (defrule fire-most-probable-if-possible (declare (salience -25))
   (moves (fires ?f&:(> ?f 0)))
-  ?mostProbable <- (mostProbable (x ?x) (y ?y))
+  ?mostProbable <- (probability (x ?x) (y ?y) (prob ?maxprob))
+  (not (probability (x ?x1) (y ?y1) (prob ?minor&:(> ?minor ?maxprob))))
 =>
   (retract ?mostProbable)
-  (assert (mostProbable (x 0) (y 0) (prob 0)))
-  (printout t "Restarting mostProbable calculation" crlf)
   (assert (plausible-cell (x ?x) (y ?y)))
 )
 
 (defrule guess-most-probable (declare (salience -25))
   (moves (fires 0) (guesses ?g&:(> ?g 0)))
-  ?mostProbable <- (mostProbable (x ?x) (y ?y))
+  ?mostProbable <- (probability (x ?x) (y ?y) (prob ?maxprob))
+  (not (probability (x ?x1) (y ?y1) (prob ?minor&:(> ?minor ?maxprob))))
 =>
   (retract ?mostProbable)
-  (assert (mostProbable (x 0) (y 0) (prob 0)))
-  (printout t "Restarting mostProbable calculation" crlf)
   (assert (guess-queue (x ?x) (y ?y)))
 )
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;; STOPPING RULES ;;;;;;;;;;;;;;;;;;;

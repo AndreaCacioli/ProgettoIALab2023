@@ -1,11 +1,12 @@
 :- load_files('azioni.pl').
 :- load_files('heuristic.pl').
 
+start :- prova(Cammino), write(Cammino).
+
 prova(Cammino):-
   iniziale(S0),
   risolvi([[S0,[], 0]],[],CamminoAlContrario),
-  inverti(CamminoAlContrario,Cammino),
-  write(Cammino).
+  inverti(CamminoAlContrario,Cammino).
 
 
 risolvi([[S,PathToS, _]|_],_,PathToS):-finale(S),!.

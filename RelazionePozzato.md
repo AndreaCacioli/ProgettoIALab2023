@@ -40,8 +40,8 @@ Per far partire le seguenti strategie si carichi tramite consultazione il labiri
 
 3. Ricerca in ampiezza
     - Caricare i file ['bfs.pl']
-    - Dimostrare con prolog i fatti prova(Cammino), write(Cammino).
+    - Dimostrare con prolog il fatto start.
 
 4. Ricerca con A*
     - Caricare i file ['astar.pl']
-    - Dimostrare con prolog i fatti prova(Cammino).
+    - Dimostrare con prolog il fatto start.

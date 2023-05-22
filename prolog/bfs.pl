@@ -1,3 +1,5 @@
+:- load_files('azioni.pl').
+
 prova(Cammino):-
    iniziale(S0),
    risolvi([[S0,[]]],[],CamminoAlContrario),

@@ -1,5 +1,4 @@
 :- load_files('azioni.pl').
-:- load_files('lab1.pl').
 :- load_files('heuristic.pl').
 
 prova(Cammino):-

@@ -1,3 +1,5 @@
+:- load_files('azioni.pl').
+
 ini :- 
   retractall(maxProf(_)),
   assert(maxProf(0)),
@@ -32,9 +34,6 @@ risolvi(S,[ Azione | ListaNuova ], Visitati) :-
   trasforma(Azione, S, Snuovo),
   \+member(Snuovo,Visitati),
   length(Visitati, Prof),
-  write("Visitati: "), write(Visitati), write("\n"),
   maxProf(X),
   Prof < X,
-  write("Current Depth: "), write(Prof), write("\n"),
-  write("Current Max Depth: "), write(X), write("\n"),
   risolvi(Snuovo, ListaNuova, [S | Visitati]).

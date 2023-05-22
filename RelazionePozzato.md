@@ -22,8 +22,8 @@ In questa prima fase si é sperimentato l'utilizzo del paradigma di programmazio
 #### Labirinti
 
 - lab1.pl: file creato in classe di test 10x10
-- hard40x100.pl: labirinto in figura
-![hard40x100.pl](prolog/hard40x100.png)
+- zigzag15x15.pl: labirinto in figura
+![zigzag15x15.pl](prolog/zigzag15x15.png)
 
 #### Utilizzo
 

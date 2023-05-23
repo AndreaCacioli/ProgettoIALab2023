@@ -70,5 +70,12 @@ I = Instantaneous (probably 10 to 20 milliseconds)
 | easy17x17   | I       | I        | I (25)                        | I          |
 | easy25x25   | I       | 390 ms   | 51.313 s (98)                 | 15 ms      |
 | hard15x15   | I       | 47       | 22.297 s (28)                 | I          |
-| hard20x20   | 1.906 s | 67.188 s |                               |            |
-|             |         |          |                               |            |
+| hard20x20   | 1.906 s | 67.188 s |                               | 6.078 s    |
+
+##### Osservazioni
+
+- La strategia in profonditá é molto buona quando non deve trovare soluzioni ottime, infatti ha fatto molto bene in tutti i labirinti, tuttavia la lunghezza del cammino in hard20x20 era di ben 87 contro i 37 della strategia in ampiezza.
+- Non sono riuscito a disegnare un labirinto che mettesse in difficoltá seriamente A*
+- Iterative Deepening, sebbene trovi sempre la soluzione ottima in termini di numero di passi, é la piú lenta in termini di tempo di esecuzione.
+- In generale i labirinti con pochi muri risultano piú dispendiosi da calcolare per le strategie che trovano una soluzione ottima, eccetto A* grazie alla sua euristica.
+- Labirinti che all'apparenza sembrano molto difficili da risolvere per noi esseri umani sono in realtá molto piú semplici per la macchina perché diminuiamo il branching factor dell'albero di ricerca nello spazio degli stati.

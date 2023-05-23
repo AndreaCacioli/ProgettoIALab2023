@@ -24,6 +24,8 @@ In questa prima fase si é sperimentato l'utilizzo del paradigma di programmazio
 - lab1.pl: file creato in classe di test 10x10
 - zigzag15x15.pl: labirinto in figura
 ![zigzag15x15.pl](prolog/zigzag15x15.png)
+- hard20x20.pl: labirinto in figura
+![hard20x20.pl](prolog/hard20x20.png)
 
 #### Utilizzo
 
@@ -45,3 +47,13 @@ Per far partire le seguenti strategie si carichi tramite consultazione il labiri
 4. Ricerca con A*
     - Caricare i file ['astar.pl']
     - Dimostrare con prolog il fatto start.
+
+#### Performance
+
+Tabella dei test effettuati:
+I = Instantaneous (10 to 20 milliseconds)
+
+| Labirinto   | A*  | Ampiezza | Iterative Deepening (MaxProf) | Profonditá |
+| ----------- | --- | -------- | ----------------------------- | ---------- |
+| lab1        | I   | I        | I (16)                        | I          |
+| zigzag15x15 | I   | I        | I (126)                       | I          |

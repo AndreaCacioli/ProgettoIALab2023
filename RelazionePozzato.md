@@ -26,6 +26,12 @@ In questa prima fase si é sperimentato l'utilizzo del paradigma di programmazio
 ![zigzag15x15.pl](prolog/zigzag15x15.png)
 - hard20x20.pl: labirinto in figura
 ![hard20x20.pl](prolog/hard20x20.png)
+- hard15x15.pl: labirinto pensato per mandare in confusione A*
+![hard15x15.pl](prolog/hard15x15.png)
+- easy17x17.pl: labirinto classico con molti blocchi
+![easy17x17.pl](prolog/easy17x17.png)
+- easy25x25.pl: labirinto classico con molti blocchi
+![easy25x25.pl](prolog/easy25x25.png)
 
 #### File Benchmarker
 
@@ -55,9 +61,14 @@ Per far partire le seguenti strategie si carichi tramite consultazione il labiri
 #### Performance
 
 Tabella dei test effettuati:
-I = Instantaneous (10 to 20 milliseconds)
+I = Instantaneous (probably 10 to 20 milliseconds)
 
-| Labirinto   | A*  | Ampiezza | Iterative Deepening (MaxProf) | Profonditá |
-| ----------- | --- | -------- | ----------------------------- | ---------- |
-| lab1        | I   | I        | I (16)                        | I          |
-| zigzag15x15 | I   | I        | I (126)                       | I          |
+| Labirinto   | A*      | Ampiezza | Iterative Deepening (MaxProf) | Profonditá |
+| ----------- | ------- | -------- | ----------------------------- | ---------- |
+| lab1        | I       | I        | I (16)                        | I          |
+| zigzag15x15 | I       | I        | I (126)                       | I          |
+| easy17x17   | I       | I        | I (25)                        | I          |
+| easy25x25   | I       | 390 ms   | 51.313 s (98)                 | 15 ms      |
+| hard15x15   | I       | 47       | 22.297 s (28)                 | I          |
+| hard20x20   | 1.906 s | 67.188 s |                               |            |
+|             |         |          |                               |            |

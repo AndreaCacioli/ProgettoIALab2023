@@ -27,16 +27,20 @@ In questa prima fase si é sperimentato l'utilizzo del paradigma di programmazio
 - hard20x20.pl: labirinto in figura
 ![hard20x20.pl](prolog/hard20x20.png)
 
+#### File Benchmarker
+
+Tale file serve solamente a provare le varie strategie su un labirinto precedentemente specificato.
+
 #### Utilizzo
 
 Per far partire le seguenti strategie si carichi tramite consultazione il labirinto che si desidera testare e si proceda come segue:
 
 1. Ricerca Iterative Deepening
-    - Caricare i file ['profonditá.pl']
+    - Caricare i file ['prof.pl']
     - Dimostrare con prolog il fatto start.
 
 2. Ricerca in profonditá
-    - Caricare i file ['profonditá.pl']
+    - Caricare i file ['prof.pl']
     - asserire una profonditá massima n grande a piacere con assert(maxProf(n))
     - Dimostrare con prolog i fatti prova(Cammino), write(Cammino).
 

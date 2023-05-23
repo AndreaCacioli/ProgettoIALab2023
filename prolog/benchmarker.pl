@@ -1,21 +1,36 @@
 test :-
     consult('astar'),
     write("\nTesting A*\n"),
+    statistics(runtime,[Start1|_]),
     start,
+    statistics(runtime,[Stop1|_]),
+    Runtime1 is Stop1 - Start1,
+    write("\nRuntime: "), write(Runtime1), write("\n"),
     unload_file('astar'),
 
     consult('bfs'),
     write("\nTesting BFS\n"),
+    statistics(runtime,[Start2|_]),
     start,
+    statistics(runtime,[Stop2|_]),
+    Runtime2 is Stop2 - Start2,
+    write("\nRuntime: "), write(Runtime2), write("\n"),
     unload_file('bfs'),
 
     consult('prof.pl'),
     write("\nTesting ID\n"),
+    statistics(runtime,[Start3|_]),
     start,
+    statistics(runtime,[Stop3|_]),
+    Runtime3 is Stop3 - Start3,
+    write("\nRuntime: "), write(Runtime3), write("\n"),
 
     assert(maxProf(2000)),
     write("\nTesting DFS\n"),
+    statistics(runtime,[Start4|_]),
     prova(Cammino),
-    write(Cammino),
+    statistics(runtime,[Stop4|_]),
+    Runtime4 is Stop4 - Start4,
+    write("\nRuntime: "), write(Runtime4), write("\n"),
 
     unload_file('prof.pl').

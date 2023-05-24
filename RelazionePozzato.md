@@ -70,7 +70,7 @@ I = Instantaneous (probably 10 to 20 milliseconds)
 | easy17x17   | I       | I        | I (25)                        | I          |
 | easy25x25   | I       | 390 ms   | 51.313 s (98)                 | 15 ms      |
 | hard15x15   | I       | 47       | 22.297 s (28)                 | I          |
-| hard20x20   | 1.906 s | 67.188 s |                               | 6.078 s    |
+| hard20x20   | 1.906 s | 67.188 s | DNF (> 3h) (33)                     | 6.078 s    |
 
 ##### Osservazioni
 

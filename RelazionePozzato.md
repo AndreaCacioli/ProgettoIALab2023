@@ -195,3 +195,20 @@ gioca(G, A) :- assegna(G,_,A).
 Il metodo 2, sebbene piú leggibile, é notevolmente piú lento del metodo 1. Pertanto si é preferito il metodo 1.
 
 **Importante**: il metodo 1 non é esaustivo per tutti i casi possibili di partite della stessa squadra nella stessa giornata, per esempio assegna(G,A,B) e assegna(G,B,A) non é impedito, tuttavia esiste un altro vincolo che obblga ad avere andata e ritorno rispettivamente nella prima metá di campionato e nella seconda metá.
+
+#### Tempo
+
+Il tempo di esecuzione sulla mia macchina é il seguente
+DNF = Did Not Finish
+DNT = Did Not Try
+
+| Dimensione Campionato | Numero squadre che condividono lo stadio | numero di Thread | Tempo di Esecuzione |
+| --------------------- | ---------------------------------------- | ---------------- | ------------------- |
+| 10 squadre            | 2                                        | 1                | .01 s               |
+| 12 squadre            | 2                                        | 1                | 11 s                |
+| 12 squadre            | 4                                        | 1                | 58 s                |
+| 14 squadre            | 2                                        | 1                | 2 min 33 s          |
+| 14 squadre            | 2                                        | 12               | 6 s                 |
+| 16 squadre            | 2                                        | 12               | 1 min 12 sec        |
+| 18 squadre            | 2                                        | 12               | 21 min 19 sec       |
+| 20 squadre            | 2                                        | 12               | DNT                 |

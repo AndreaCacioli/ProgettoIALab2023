@@ -22,10 +22,8 @@ partita(A, B) :- squadra(A), squadra(B), A != B.
 
 % gioca(G, A) :- assegna(G,A,_).
 % gioca(G, A) :- assegna(G,_,A).
-
 % :- squadra(A), giornata(G), not gioca(G,A).
 
-%
 % Vincolo alternativo ad aggregato
 % :- assegna(G1, Squadra1, Squadra2), assegna(G2, Squadra1, Squadra2), G1 <> G2.
 

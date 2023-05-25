@@ -9,7 +9,7 @@ Matricola: 914501
 
 In questa prima fase si é sperimentato l'utilizzo del paradigma di programmazione logica in prolog. Il progetto consiste nello sviluppo di un codice in grado di risolvere il problema del labirinto attraverso diverse strategie di ricerca nello spazio degli stati.
 
-### File prodotti
+### File prodotti (prolog)
 
 #### File principali
 
@@ -62,6 +62,7 @@ Per far partire le seguenti strategie si carichi tramite consultazione il labiri
 
 Tabella dei test effettuati:
 I = Instantaneous (probably 10 to 20 milliseconds)
+DNF = Did Not Finish
 
 | Labirinto   | A*      | Ampiezza | Iterative Deepening (MaxProf) | Profonditá |
 | ----------- | ------- | -------- | ----------------------------- | ---------- |
@@ -83,3 +84,112 @@ I = Instantaneous (probably 10 to 20 milliseconds)
 ## Clingo
 
 Nel progetto di Asp é richiesto di scrivere un programma clingo in grado di generare un calendario per una competizione sportiva.
+Tale calendario é esprimibile in linguaggio clingo tramite una serie di vincoli di integritá e di aggregati.
+
+### File prodotti (clingo)
+
+I file del progetto sono diversi ma di due tipi principali:
+
+1. campionato_vincoli.cl: il file contenente tutti i vincoli che prescindono dal numero di squadre presenti nel campionato.
+2. campionato[X].cl: diversi file in cui al posto di X c'é il numero di squadre del campionato e che contiene i vincoli che cambiano in funzione del numero di squadre.
+
+### Utilizzo
+
+Per far funzionare il programma e avere in output un campionato su di un file di testo chiamato **out.txt** utilizzando **12 thread** per il calcolo bisogna eseguire il seguente comando:
+
+```sh
+clingo ./campionato_vincoli.cl ./campionato[X].cl  -t 12 > out.txt 
+```
+
+Rimpiazzando [X] con il numero di squadre di cui si vuole il calendario.
+
+### Output
+
+L'output é una lista di predicati assegna con arietá 3 in cui il primo argomento é la giornata di riferimento della partita, il secondo é la squadra di casa e il terzo é la squadra in trasferta.
+Siccome l'output puó essere spesso confusionario é opportuno processarlo con un editor di testo e il risultato di un campionato da 14 squadre é il seguente:
+
+```text
+assegna(1,bulls,celtics)
+assegna(1,cavaliers,nets)
+assegna(1,seventysixers,mavericks)
+assegna(1,warriors,lakers)
+assegna(1,clippers,rockets)
+assegna(1,pistons,pacers)
+assegna(1,heat,nuggets)
+assegna(2,pacers,celtics)
+assegna(2,bulls,seventysixers)
+assegna(2,heat,cavaliers)
+assegna(2,mavericks,pistons)
+assegna(2,warriors,clippers)
+assegna(2,lakers,rockets)
+assegna(2,nets,nuggets)
+...
+assegna(26,celtics,bulls)
+assegna(26,pistons,mavericks)
+assegna(26,lakers,warriors)
+assegna(26,cavaliers,clippers)
+assegna(26,nuggets,rockets)
+assegna(26,nets,pacers)
+assegna(26,seventysixers,heat)
+```
+
+I 3 puntini indicano che ci sono le altre giornate nel file di output ma che non le ho riportate qui per non rendere la relazione troppo lunga.
+
+### Predicati
+
+I predicati che sono stati utilizzati sono i seguenti:
+
+- assegna/3:
+    1. Giornata di campionato
+    2. Squadra di casa
+    3. Squadra in trasferta
+- squadra/1:
+    1. Una squadra del campionato
+- giornata/1:
+    1. Una giornata del campionato
+- citta/2:
+    1. Una squadra del campionato
+    2. La sua cittá di afferenza
+
+### Performance
+
+Una delle maggiori difficotá é stata quella di riuscire a far terminare il programma con un elevato numero di squadre pur rispettando tutti i vincoli. Questo é particolarmente difficile in questo paradigma poiché non si specifica come ottenere la soluzione ma come deve essere tale soluzione: in pieno rispetto del **paradigma dichiarativo**.
+
+Tuttavia sono state fatte delle misurazioni di tempi impiegati dal programma in utilizzando diverse formulazioni per gli stessi vincoli.
+
+#### Tentativi
+
+Un **primo tentativo** é stato quello di rimuovere l'aggregato che obbliga lo **svolgimento di tutte le partite in qualche giornata**:
+
+```clingo
+1 { assegna(G, Squadra1, Squadra2): giornata(G)  } 1 :- partita(Squadra1,Squadra2).
+```
+
+Con il seguente predicato e relativo vincolo.
+
+```clingo
+% Vincolo alternativo ad aggregato (non posso assegnare a giornate diverse la stessa partita)
+:- assegna(G1, Squadra1, Squadra2), assegna(G2, Squadra1, Squadra2), G1 <> G2.
+```
+
+Purtroppo tale cambiamento ha solamente rallentato l'esecuzione del programma.
+
+Il **secondo tentativo** per velocizzare il programma cerca metodi alternativi per risolvere il problema di **non avere la stessa squadra che fa partite diverse nella stessa giornata**
+
+Metodo 1:
+
+```clingo
+:- assegna(G, Squadra1, Squadra2), assegna(G, Squadra1, Squadra3), Squadra2 != Squadra3.
+:- assegna(G, Squadra2, Squadra1), assegna(G, Squadra3, Squadra1), Squadra2 != Squadra3.
+:- assegna(G, Squadra2, Squadra1), assegna(G, Squadra1, Squadra3), Squadra2 != Squadra3.
+```
+
+Metodo 2:
+
+```clingo
+gioca(G, A) :- assegna(G,A,_).
+gioca(G, A) :- assegna(G,_,A).
+:- squadra(A), giornata(G), not gioca(G,A).
+```
+
+Il metodo 2, sebbene piú leggibile, é notevolmente piú lento del metodo 1. Pertanto si é preferito il metodo 1.

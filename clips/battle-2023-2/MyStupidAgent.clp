@@ -68,7 +68,7 @@
 )
 
 ;Important rule to spare some fires
-(defrule found-one-remove-the-other1 (declare (salience 15))
+(defrule found-one-remove-the-other2 (declare (salience 15))
  (fired (x ?x) (y ?y)) 
  (k-cell (x ?x) (y ?y) (content ~water))
  ?noNeed <- (one-or-the-other (x1 ?x1) (y1 ?y1) (x2 ?x) (y2 ?y))

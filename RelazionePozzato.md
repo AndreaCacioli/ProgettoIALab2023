@@ -23,14 +23,23 @@ In questa prima fase si é sperimentato l'utilizzo del paradigma di programmazio
 
 - lab1.pl: file creato in classe di test 10x10
 - zigzag15x15.pl: labirinto in figura
+
 ![zigzag15x15.pl](prolog/zigzag15x15.png)
+
 - hard20x20.pl: labirinto in figura
+
 ![hard20x20.pl](prolog/hard20x20.png)
+
 - hard15x15.pl: labirinto pensato per mandare in confusione A*
+
 ![hard15x15.pl](prolog/hard15x15.png)
+
 - easy17x17.pl: labirinto classico con molti blocchi
+
 ![easy17x17.pl](prolog/easy17x17.png)
+
 - easy25x25.pl: labirinto classico con molti blocchi
+
 ![easy25x25.pl](prolog/easy25x25.png)
 
 #### File Benchmarker

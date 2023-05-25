@@ -20,6 +20,7 @@ partita(A, B) :- squadra(A), squadra(B), A != B.
 
 %%%%%%% UNUSED CONSTRAINTS %%%%%%%%%
 
+% Vincolo alternativo ai 3 vincoli
 % gioca(G, A) :- assegna(G,A,_).
 % gioca(G, A) :- assegna(G,_,A).
 % :- squadra(A), giornata(G), not gioca(G,A).
@@ -27,5 +28,10 @@ partita(A, B) :- squadra(A), squadra(B), A != B.
 % Vincolo alternativo ad aggregato
 % :- assegna(G1, Squadra1, Squadra2), assegna(G2, Squadra1, Squadra2), G1 <> G2.
 
+% Vincoli in surplus (ridondante per vincolo che separa andata e ritorno)
 % :- assegna(G, Squadra1, Squadra2), assegna(G, Squadra2, Squadra1).
+
+% Vincoli in surplus (non conta l'ordine degli assegnamenti)
+%%% Questi vincoli dicono la stessa cosa
+% :- assegna(G, Squadra2, Squadra1), assegna(G, Squadra1, Squadra3), Squadra2 != Squadra3.
 % :- assegna(G, Squadra1, Squadra2), assegna(G, Squadra3, Squadra1), Squadra2 != Squadra3.

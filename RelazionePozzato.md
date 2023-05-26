@@ -220,4 +220,4 @@ DNT = Did Not Try
 | 14 squadre            | 2                                        | 12               | 6 s                 |
 | 16 squadre            | 2                                        | 12               | 1 min 12 sec        |
 | 18 squadre            | 2                                        | 12               | 21 min 19 sec       |
-| 20 squadre            | 2                                        | 12               | DNT                 |
+| 20 squadre            | 2                                        | 12               | DNF (> 14h)         |

@@ -41,7 +41,7 @@ sp { apply*combine*spring*and*twig
     (<op> ^name make-sling)
 -->
     (<s> ^hasSling true + false -)
-    (write |CREATED SLING|)
+    (write |CREATED SLING| (crlf) )
 }
 
 ############################
@@ -58,11 +58,11 @@ sp { propose*combine*pebbles*and*twig
     (<o> ^name combine-pebbles-twig) 
 }
 
-sp { apply*combine*spring*and*twig
+sp { apply*combine*pebbles*and*twig
     (state <s> ^operator <op>)
     (<op> ^name combine-pebbles-twig)
 -->
-    (write |NOTHING HAPPENED|)
+    (write |NOTHING HAPPENED| (crlf) )
 }
 
 ############################
@@ -85,19 +85,19 @@ sp { RLinit*combine*pebbles*and*twig
 ## 
 # Apply rewards
 ##
-sp { apply*rewards*to*reward*link
-    (state <s> ^name escapeGame ^reward-link <rl> ^hasSling true)
--->
-    (<rl> ^reward <re>)
-    (<re> ^value 1)
-}
-
-sp { apply*rewards*to*reward*link
-    (state <s> ^name escapeGame ^reward-link <rl> ^hasSling false)
--->
-    (<rl> ^reward <re>)
-    (<re> ^value -1)
-}
+# sp { apply*rewards*to*reward*link
+#     (state <s> ^name escapeGame ^reward-link <rl> ^hasSling true)
+# -->
+#     (<rl> ^reward <re>)
+#     (<re> ^value 1)
+# }
+# 
+# sp { apply*rewards*to*reward*link
+#     (state <s> ^name escapeGame ^reward-link <rl> ^hasSling false)
+# -->
+#     (<rl> ^reward <re>)
+#     (<re> ^value -1)
+# }
 
 ###############
 ## TERMINATE ##
@@ -108,6 +108,6 @@ sp { terminate
         ^hasSling true
     )
 -->
-    (write |FINISH|)
+    (write |FINISH| (crlf) )
     (halt)
 }

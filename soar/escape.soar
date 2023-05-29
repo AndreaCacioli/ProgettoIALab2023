@@ -1,0 +1,86 @@
+################
+## INITIALIZE ##
+################
+sp { initialize*escape
+    (state <s> ^superstate nil -^name)
+-->
+    (<s> ^operator <o> +)
+    (<o> ^name initialize)
+}
+
+sp { apply*initialize
+    (state <s> ^operator <o>)
+    (<o> ^name initialize)
+-->
+    (<s> ^name escapeGame ^resources <res> ^window intact ^escaped false ^hasSling false)
+    (<res> ^pebbles 10)
+}
+
+##################
+## CREATE SLING ##
+##################
+sp { propose*combine*spring*and*twig
+    (state <s> 
+        ^name escapeGame
+        ^hasSling false
+        ^window intact
+    )
+-->
+    (<s> ^operator <o> +)
+    (<o> ^name make-sling) 
+}
+
+sp { apply*combine*spring*and*twig
+    (state <s> ^operator <op> +)
+    (<op> ^name make-sling)
+-->
+    (<s> ^hasSling true + false -)
+    (write CREATED SLING)
+}
+
+############################
+## COMBINE PEBBLES-TWIGS  ##
+############################
+sp { propose*combine*pebbles*and*twig
+    (state <s> 
+        ^name escapeGame
+        ^hasSling false
+        ^window intact
+    )
+-->
+    (<s> ^operator <o> +)
+    (<o> ^name combine-pebbles-twig) 
+}
+
+sp { apply*combine*pebbles*and*twig
+    (state <s> ^operator <op> +)
+    (<op> ^name combine-pebbles-twig)
+-->
+    (write NothingHappened)
+}
+
+############################
+## REINFORCEMENT LEARNING ##
+############################
+
+# sp { RLinit*combine*spring*and*twig
+#     (state <s> ^name escapeGame ^operator <o> +)
+#     (<o> ^name make-sling) 
+# -->
+#     (state <s> ^operator <o> = 0)
+# }
+
+
+
+###############
+## TERMINATE ##
+###############
+sp { terminate
+    (state <s> 
+        ^name escapeGame
+        ^escaped true
+    )
+-->
+    (write ESCAPED)
+    (halt)
+}

@@ -70,6 +70,37 @@ sp { apply*combine*pebbles*and*twig
     (write |NOTHING HAPPENED| (crlf) )
 }
 
+###############
+## SHOOTING  ##
+###############
+sp { propose*shoot
+    (state <s> ^name escapeGame ^hasSling true ^window intact)
+-->
+    (<s> ^operator <o> +)
+    (<o> ^name shoot)
+}
+
+sp { apply*shoot
+    (state <s> ^operator <o>)
+    (<o> ^name shoot)
+-->
+    (write |Rolling a dice to see if the window broke| (crlf) )
+    (<s> ^fate (rand-int 10))
+}
+
+sp { convert*fate*to*broken*window
+    (state <s> ^fate <f> > 5 ^window intact)
+-->
+    (write |Window Broken| (crlf) )
+    (<s> ^window broken)
+}
+sp { reset*fate
+    (state <s> ^fate <f> <= 5 ^window intact)
+-->
+    (<s> ^fate <f> -)
+    (write |Window resisted| (crlf) )
+}
+
 ############################
 ## REINFORCEMENT LEARNING ##
 ############################
@@ -91,7 +122,7 @@ sp { RLinit*combine*pebbles*and*twig
 # Apply rewards
 ##
 sp { apply*rewards*to*reward*link
-    (state <s> ^name escapeGame ^reward-link <rl> ^reward <r> {<> <r> 0})
+    (state <s> ^name escapeGame ^reward-link <rl> ^reward <r> <> 0)
 -->
     (<rl> ^reward <re>)
     (<re> ^value <r>)
@@ -105,7 +136,7 @@ sp { apply*rewards*to*reward*link
 sp { terminate
     (state <s> 
         ^name escapeGame
-        ^hasSling true
+        ^window broken
     )
 -->
     (write |FINISH| (crlf) )

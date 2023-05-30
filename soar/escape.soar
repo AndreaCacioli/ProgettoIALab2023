@@ -17,6 +17,7 @@ sp { apply*initialize
         ^window intact 
         ^escaped false 
         ^hasSling false
+        ^lastAction noAction
     )
 }
 
@@ -28,6 +29,7 @@ sp { propose*combine*spring*and*twig
         ^name escapeGame
         ^hasSling false
         ^window intact
+        ^lastAction <l> <> combineSpringTwig
     )
 -->
     (<s> ^operator <o> +)
@@ -35,11 +37,12 @@ sp { propose*combine*spring*and*twig
 }
 
 sp { apply*combine*spring*and*twig
-    (state <s> ^operator <op>)
+    (state <s> ^operator <op> ^lastAction <l>)
     (<op> ^name make-sling)
 -->
     (<s> ^hasSling true + false -)
     (<s> ^reward 1)
+    (<s> ^lastAction combineSpringTwig + <l> -)
     (write |CREATED SLING| (crlf) )
 }
 
@@ -51,6 +54,7 @@ sp { propose*combine*pebbles*and*twig
         ^name escapeGame
         ^hasSling false
         ^window intact
+        ^lastAction <l> <> combinePebblesTwig
     )
 -->
     (<s> ^operator <o> +)
@@ -58,10 +62,11 @@ sp { propose*combine*pebbles*and*twig
 }
 
 sp { apply*combine*pebbles*and*twig
-    (state <s> ^operator <op>)
+    (state <s> ^operator <op> ^lastAction <l>)
     (<op> ^name combine-pebbles-twig)
 -->
     (<s> ^reward -1)
+    (<s> ^lastAction combinePebblesTwig + <l> -)
     (write |NOTHING HAPPENED| (crlf) )
 }
 

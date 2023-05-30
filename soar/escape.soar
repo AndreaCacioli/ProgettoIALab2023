@@ -17,8 +17,9 @@ sp { apply*initialize
         ^window intact 
         ^escaped false 
         ^hasSling false
-        ^lastAction noAction
+        ^lastAction <lastAction>
     )
+    (<lastAction> ^name noAction ^reward 0)
 }
 
 ##################
@@ -29,8 +30,9 @@ sp { propose*combine*spring*and*twig
         ^name escapeGame
         ^hasSling false
         ^window intact
-        ^lastAction <l> <> combineSpringTwig
+        ^lastAction <lastAction>
     )
+     (<lastAction>  ^name <> combineSpringTwig)
 -->
     (<s> ^operator <o> +)
     (<o> ^name make-sling) 
@@ -41,8 +43,8 @@ sp { apply*combine*spring*and*twig
     (<op> ^name make-sling)
 -->
     (<s> ^hasSling true + false -)
-    (<s> ^reward 1)
-    (<s> ^lastAction combineSpringTwig + <l> -)
+    (<s> ^lastAction <l> - <lastAction> +)
+    (<lastAction> ^name combineSpringTwig ^reward 1)
     (write |CREATED SLING| (crlf) )
 }
 
@@ -54,8 +56,9 @@ sp { propose*combine*pebbles*and*twig
         ^name escapeGame
         ^hasSling false
         ^window intact
-        ^lastAction <l> <> combinePebblesTwig
+        ^lastAction <lastAction>
     )
+    (<lastAction> ^name <> combinePebblesTwig )
 -->
     (<s> ^operator <o> +)
     (<o> ^name combine-pebbles-twig) 
@@ -65,8 +68,8 @@ sp { apply*combine*pebbles*and*twig
     (state <s> ^operator <op> ^lastAction <l>)
     (<op> ^name combine-pebbles-twig)
 -->
-    (<s> ^reward -1)
-    (<s> ^lastAction combinePebblesTwig + <l> -)
+    (<s> ^lastAction <l> - <lastAction> +)
+    (<lastAction> ^name combinePebblesTwig ^reward -1)
     (write |NOTHING HAPPENED| (crlf) )
 }
 
@@ -74,31 +77,47 @@ sp { apply*combine*pebbles*and*twig
 ## SHOOTING  ##
 ###############
 sp { propose*shoot*corner
-    (state <s> ^name escapeGame ^hasSling true ^window intact)
+    (state <s> 
+        ^name escapeGame 
+        ^hasSling true 
+        ^window intact 
+        ^lastAction <lastAction>
+    )
+    (<lastAction> ^name <> shootCorner)
 -->
     (<s> ^operator <o> +)
     (<o> ^name shoot*corner)
 }
 
 sp { apply*shoot*corner
-    (state <s> ^operator <o>)
+    (state <s> ^operator <o> ^lastAction <l>)
     (<o> ^name shoot*corner)
 -->
     (write |The shot BROKE the window| (crlf) )
+    (<s> ^lastAction <l> - <lastAction> +)
+    (<lastAction> ^name shootCorner ^reward 1)
     (<s> ^window intact - broken +)
 }
 
 sp { propose*shoot*center
-    (state <s> ^name escapeGame ^hasSling true ^window intact)
+    (state <s> 
+        ^name escapeGame 
+        ^hasSling true 
+        ^window intact 
+        ^lastAction <lastAction>
+    )
+    (<lastAction> ^name <> shootCenter)
 -->
     (<s> ^operator <o> +)
     (<o> ^name shoot*center)
 }
 
 sp { apply*shoot*center
-    (state <s> ^operator <o>)
+    (state <s> ^operator <o> ^lastAction <l>)
     (<o> ^name shoot*corner)
 -->
+    (<s> ^lastAction <l> - <lastAction> +)
+    (<lastAction> ^name shootCenter ^reward -1)
     (write |The shot DID NOT AFFECT the window| (crlf) )
 }
 

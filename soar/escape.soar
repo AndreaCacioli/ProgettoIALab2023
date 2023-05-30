@@ -17,7 +17,11 @@ sp { apply*initialize
     (<o> ^name initialize)
 -->
     (<s> 
-        ^name escapeGame 
+        ^name escapeGame
+        ^hasLogs false
+        ^logsPosition est
+        ^position nord
+        ^windowPosition nord
         ^window intact 
         ^escaped false 
         ^hasSling false
@@ -200,13 +204,125 @@ sp { apply*rewards*to*reward*link
     (write (crlf) |APPLIED A REWARD OF | <r> (crlf) )
 }
 
+##############
+## MOVEMENT ##
+##############
+
+sp { propose*movement*nord
+    (state <s> ^position <> nord ^lastAction <lastAction>)
+    (<lastAction> ^name <> moveNord)
+-->
+    (<s> ^operator <o> +)
+    (<o> ^name move*nord ^result nord)
+}
+
+sp { apply*movement*nord
+    (state <s> ^operator <o> ^position <p> ^lastAction <l>)
+    (<o> ^name move*nord)
+-->
+    (write |MOVED NORD| (crlf) )
+    (^lastAction <l> - <lastAction> +)
+    (<lastAction> ^name moveNord)
+    (<s> ^position <p> - nord +)
+}
+
+sp { propose*movement*sud
+    (state <s> ^position <> sud ^lastAction <lastAction>)
+    (<lastAction> ^name <> moveSud)
+-->
+    (<s> ^operator <o> +)
+    (<o> ^name move*sud ^resutl sud)
+}
+
+sp { apply*movement*sud
+    (state <s> ^operator <o> ^position <p> ^lastAction <l>)
+    (<o> ^name move*sud)
+-->
+    (write |MOVED sud| (crlf) )
+    (^lastAction <l> - <lastAction> +)
+    (<lastAction> ^name moveSud)
+    (<s> ^position <p> - sud +)
+}
+
+sp { propose*movement*est
+    (state <s> ^position <> est ^lastAction <lastAction>)
+    (<lastAction> ^name <> moveEst)
+-->
+    (<s> ^operator <o> +)
+    (<o> ^name move*est ^result est)
+}
+
+sp { apply*movement*est
+    (state <s> ^operator <o> ^position <p> ^lastAction <l>)
+    (<o> ^name move*est)
+-->
+    (write |MOVED est| (crlf) )
+    (^lastAction <l> - <lastAction> +)
+    (<lastAction> ^name moveEst)
+    (<s> ^position <p> - est +)
+}
+
+sp { propose*movement*ovest
+    (state <s> ^position <> ovest ^lastAction <lastAction>)
+    (<lastAction> ^name <> moveOvest)
+-->
+    (<s> ^operator <o> +)
+    (<o> ^name move*ovest ^result ovest)
+}
+
+sp { apply*movement*ovest
+    (state <s> ^operator <o> ^position <p> ^lastAction <l>)
+    (<o> ^name move*ovest)
+-->
+    (write |MOVED ovest| (crlf) )
+    (^lastAction <l> - <lastAction> +)
+    (<lastAction> ^name moveOvest)
+    (<s> ^position <p> - ovest +)
+}
+
+sp { movement*priority*logs
+    (state <s> ^operator <o> ^hasLogs false ^logsPosition <logsPos>)
+    (<o> ^result <r> = <logsPos>)
+-->
+    (<s> ^operator <o> >)
+}
+
+sp { movement*priority*window
+    (state <s> ^operator <o> ^hasLogs true ^windowPosition <winPos>)
+    (<o> ^result <r> = <winPos>)
+-->
+    (<s> ^operator <o> >)
+}
+
+##################
+## PICK UP LOGS ##
+##################
+sp { propose*pick*up*logs
+    (state <s> ^hasLogs false ^position <pos> ^logsPos <pos> ^lastAction <lastAction>)
+    (<lastAction> <> pickUpLogs)
+-->
+    (<s> ^operator <o> +)
+    (<o> ^name pick*up*logs)
+}
+
+sp { apply*pick*up*logs
+    (state <s> ^operator <o> ^lastAction <l>)
+    (<o> ^name pick*up*logs)
+-->
+    (write |Picked Up Logs| (crlf) )
+    (^lastAction <l> - <lastAction> +)
+    (<lastAction> ^name pickUpLogs)
+    (<s> ^hasLogs false - true +)
+}
+
+
 ###############
 ## TERMINATE ##
 ###############
 sp { terminate
     (state <s> 
         ^name escapeGame
-        ^window broken
+        ^escaped true
     )
 -->
     (write |FINISH| (crlf) )

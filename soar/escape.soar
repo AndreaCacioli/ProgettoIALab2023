@@ -20,6 +20,7 @@ sp { apply*initialize
         ^name escapeGame
         ^hasLogs false
         ^logsPosition est
+        ^towerBuilt false
         ^position nord
         ^windowPosition nord
         ^window intact 
@@ -27,7 +28,7 @@ sp { apply*initialize
         ^hasSling false
         ^lastAction <lastAction>
     )
-    (<lastAction> ^name noAction ^reward 0)
+    (<lastAction> ^name noAction)
 }
 
 ##################
@@ -221,7 +222,7 @@ sp { apply*movement*nord
     (<o> ^name move*nord)
 -->
     (write |MOVED NORD| (crlf) )
-    (^lastAction <l> - <lastAction> +)
+    (<s> ^lastAction <l> - <lastAction> +)
     (<lastAction> ^name moveNord)
     (<s> ^position <p> - nord +)
 }
@@ -231,7 +232,7 @@ sp { propose*movement*sud
     (<lastAction> ^name <> moveSud)
 -->
     (<s> ^operator <o> +)
-    (<o> ^name move*sud ^resutl sud)
+    (<o> ^name move*sud ^result sud)
 }
 
 sp { apply*movement*sud
@@ -239,7 +240,7 @@ sp { apply*movement*sud
     (<o> ^name move*sud)
 -->
     (write |MOVED sud| (crlf) )
-    (^lastAction <l> - <lastAction> +)
+    (<s> ^lastAction <l> - <lastAction> +)
     (<lastAction> ^name moveSud)
     (<s> ^position <p> - sud +)
 }
@@ -257,7 +258,7 @@ sp { apply*movement*est
     (<o> ^name move*est)
 -->
     (write |MOVED est| (crlf) )
-    (^lastAction <l> - <lastAction> +)
+    (<s> ^lastAction <l> - <lastAction> +)
     (<lastAction> ^name moveEst)
     (<s> ^position <p> - est +)
 }
@@ -275,31 +276,38 @@ sp { apply*movement*ovest
     (<o> ^name move*ovest)
 -->
     (write |MOVED ovest| (crlf) )
-    (^lastAction <l> - <lastAction> +)
+    (<s> ^lastAction <l> - <lastAction> +)
     (<lastAction> ^name moveOvest)
     (<s> ^position <p> - ovest +)
 }
 
 sp { movement*priority*logs
-    (state <s> ^operator <o> ^hasLogs false ^logsPosition <logsPos>)
-    (<o> ^result <r> = <logsPos>)
+    (state <s> ^operator <o> + ^hasLogs false ^logsPosition <logsPos>)
+    (<o> ^result <logsPos>)
 -->
     (<s> ^operator <o> >)
 }
 
 sp { movement*priority*window
-    (state <s> ^operator <o> ^hasLogs true ^windowPosition <winPos>)
-    (<o> ^result <r> = <winPos>)
+    (state <s> ^operator <o> + ^hasLogs true ^position <pos> ^windowPosition <winPos> <> <pos>)
+    (<o> ^result <winPos>)
 -->
     (<s> ^operator <o> >)
+}
+
+sp { movement*useless*if*ready
+    (state <s> ^hasLogs true ^position <pos> ^windowPosition <pos> ^operator <o> +)
+    (<o> ^result <r>)
+-->
+    (<s> ^operator <o> <)
 }
 
 ##################
 ## PICK UP LOGS ##
 ##################
 sp { propose*pick*up*logs
-    (state <s> ^hasLogs false ^position <pos> ^logsPos <pos> ^lastAction <lastAction>)
-    (<lastAction> <> pickUpLogs)
+    (state <s> ^hasLogs false ^position <pos> ^logsPosition <pos> ^lastAction <lastAction>)
+    (<lastAction> ^name <> pickUpLogs)
 -->
     (<s> ^operator <o> +)
     (<o> ^name pick*up*logs)
@@ -310,11 +318,73 @@ sp { apply*pick*up*logs
     (<o> ^name pick*up*logs)
 -->
     (write |Picked Up Logs| (crlf) )
-    (^lastAction <l> - <lastAction> +)
+    (<s> ^lastAction <l> - <lastAction> +)
     (<lastAction> ^name pickUpLogs)
     (<s> ^hasLogs false - true +)
 }
 
+sp { logs*prioritize*pick*up
+    (state <s> ^operator <o> + ^logsPosition <lp> ^position <lp> ^hasLogs false)
+    (<o> ^name pick*up*logs)
+-->
+    (<s> ^operator <o> >)
+}
+
+#################
+## BUILD TOWER ##
+#################
+sp { propose*build*tower
+    (state <s> ^towerBuilt false ^escaped false ^hasLogs true ^position <pos> ^windowPosition <pos> ^lastAction <lastAction> <> buildTower)
+-->
+    (<s> ^operator <o>)
+    (<o> ^name build*tower)
+}
+
+sp { apply*build*tower
+    (state <s> ^operator <o> ^lastAction <l>)
+    (<o> ^name build*tower)
+--> 
+    (write |Building a tower with the logs| (crlf) )
+    (<s> ^towerBuilt false - true +)
+    (<s> ^lastAction <l> - <lastAction> + )
+    (<lastAction> ^name buildTower)
+}
+
+#################
+## CLIMB TOWER ##
+#################
+sp { propose*climb*tower
+    (state <s> ^towerBuilt true ^escaped false ^hasLogs true ^position <pos> ^windowPosition <pos> ^lastAction <lastAction> <> climbTower)
+-->
+    (<s> ^operator <o>)
+    (<o> ^name climb*tower)
+}
+
+sp { apply*climb*tower
+    (state <s> ^operator <o> ^lastAction <l>)
+    (<o> ^name climb*tower)
+--> 
+    (write |CLIMBING to FREEDOM| (crlf) )
+    (<s> ^escaped false - true +)
+    (<s> ^lastAction <l> - <lastAction> + )
+    (<lastAction> ^name climbTower)
+}
+
+# If the tower is there and the window is still intact climbing serves no purpose
+sp { climb*tower*low*priority
+    (state <s> ^towerBuilt true ^window intact ^operator <o> +)
+    (<o> ^name climb*tower)
+-->
+    (<s> ^operator <o> <)
+}
+
+# If we have the logs but the window is still intact, building a tower serves no purpose
+sp { build*tower*low*priority
+    (state <s> ^window intact ^hasLogs true ^operator <o> +)
+    (<o> ^name build*tower)
+-->
+    (<s> ^operator <o> <)
+}
 
 ###############
 ## TERMINATE ##

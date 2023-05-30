@@ -114,7 +114,7 @@ sp { propose*shoot*center
 
 sp { apply*shoot*center
     (state <s> ^operator <o> ^lastAction <l>)
-    (<o> ^name shoot*corner)
+    (<o> ^name shoot*center)
 -->
     (<s> ^lastAction <l> - <lastAction> +)
     (<lastAction> ^name shootCenter ^reward -1)

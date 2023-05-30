@@ -155,14 +155,14 @@ sp { RLinit*shoot*center
 ## 
 # Apply rewards
 ##
-# sp { apply*rewards*to*reward*link
-#     (state <s> ^name escapeGame ^reward-link <rl> ^reward <r> <> 0)
-# -->
-#     (<rl> ^reward <re>)
-#     (<re> ^value <r>)
-#     (<s> ^reward 0)
-#     (write |Aplied a reward of | <r> (crlf) )
-# }
+sp { apply*rewards*to*reward*link
+    (state <s> ^name escapeGame ^reward-link <rl> ^lastAction <lastAction>)
+    (<lastAction> ^reward <r>)
+-->
+    (<rl> ^reward <re>)
+    (<re> ^value <r>)
+    (write (crlf) |APPLIED A REWARD OF | <r> (crlf) )
+}
 
 ###############
 ## TERMINATE ##

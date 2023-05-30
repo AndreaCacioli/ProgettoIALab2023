@@ -1,6 +1,6 @@
 # rl -s learning on # enable RL
-# indiff -g # use epsilon-greedy decision making
-# indiff -e 0.1 # 10% deviation from greedy
+# indifferent-selection --stats #to check parameters of reinforcement learning
+# indifferent-selection -e 0.2 #20% deviation from greedy
 
 ################
 ## INITIALIZE ##

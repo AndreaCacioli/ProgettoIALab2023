@@ -14,13 +14,10 @@ sp { apply*initialize
 -->
     (<s> 
         ^name escapeGame 
-        ^resources <res> 
         ^window intact 
         ^escaped false 
         ^hasSling false
-        ^reward 0
     )
-    (<res> ^pebbles 10)
 }
 
 ##################
@@ -31,7 +28,6 @@ sp { propose*combine*spring*and*twig
         ^name escapeGame
         ^hasSling false
         ^window intact
-        ^reward 0
     )
 -->
     (<s> ^operator <o> +)
@@ -55,7 +51,6 @@ sp { propose*combine*pebbles*and*twig
         ^name escapeGame
         ^hasSling false
         ^window intact
-        ^reward 0
     )
 -->
     (<s> ^operator <o> +)
@@ -73,32 +68,33 @@ sp { apply*combine*pebbles*and*twig
 ###############
 ## SHOOTING  ##
 ###############
-sp { propose*shoot
+sp { propose*shoot*corner
     (state <s> ^name escapeGame ^hasSling true ^window intact)
 -->
     (<s> ^operator <o> +)
-    (<o> ^name shoot)
+    (<o> ^name shoot*corner)
 }
 
-sp { apply*shoot
+sp { apply*shoot*corner
     (state <s> ^operator <o>)
-    (<o> ^name shoot)
+    (<o> ^name shoot*corner)
 -->
-    (write |Rolling a dice to see if the window broke| (crlf) )
-    (<s> ^fate (rand-int 10))
+    (write |The shot BROKE the window| (crlf) )
+    (<s> ^window intact - broken +)
 }
 
-sp { convert*fate*to*broken*window
-    (state <s> ^fate <f> > 5 ^window intact)
+sp { propose*shoot*center
+    (state <s> ^name escapeGame ^hasSling true ^window intact)
 -->
-    (write |Window Broken| (crlf) )
-    (<s> ^window broken)
+    (<s> ^operator <o> +)
+    (<o> ^name shoot*center)
 }
-sp { reset*fate
-    (state <s> ^fate <f> <= 5 ^window intact)
+
+sp { apply*shoot*center
+    (state <s> ^operator <o>)
+    (<o> ^name shoot*corner)
 -->
-    (<s> ^fate <f> -)
-    (write |Window resisted| (crlf) )
+    (write |The shot DID NOT AFFECT the window| (crlf) )
 }
 
 ############################
@@ -118,17 +114,31 @@ sp { RLinit*combine*pebbles*and*twig
     (<s> ^operator <o> = 0)
 }
 
+sp { RLinit*shoot*corner
+    (state <s> ^name escapeGame ^operator <o> +)
+    (<o> ^name shoot*corner) 
+-->
+    (<s> ^operator <o> = 0)
+}
+
+sp { RLinit*shoot*center
+    (state <s> ^name escapeGame ^operator <o> +)
+    (<o> ^name shoot*center) 
+-->
+    (<s> ^operator <o> = 0)
+}
+
 ## 
 # Apply rewards
 ##
-sp { apply*rewards*to*reward*link
-    (state <s> ^name escapeGame ^reward-link <rl> ^reward <r> <> 0)
--->
-    (<rl> ^reward <re>)
-    (<re> ^value <r>)
-    (<s> ^reward 0)
-    (write |Aplied a reward of | <r> (crlf) )
-}
+# sp { apply*rewards*to*reward*link
+#     (state <s> ^name escapeGame ^reward-link <rl> ^reward <r> <> 0)
+# -->
+#     (<rl> ^reward <re>)
+#     (<re> ^value <r>)
+#     (<s> ^reward 0)
+#     (write |Aplied a reward of | <r> (crlf) )
+# }
 
 ###############
 ## TERMINATE ##

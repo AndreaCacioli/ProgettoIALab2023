@@ -25,7 +25,7 @@ La strategia del mio sistema é semplice:
 
 ### Fatti
 
-I fatti relativi al contenuto di una cella sono i seguenti e contengono le coordinate della cella di cui si parla:
+I fatti (non ordinati) relativi al contenuto di una cella sono i seguenti e contengono le coordinate della cella di cui si parla:
 
 - cell se una cella esiste
 - guessed: se si é fatto un guess su una cella
@@ -68,25 +68,47 @@ $$
 $$
 
 #### Esempio
+
 ⚫ = Barca nota
 🌊 = Acqua nota
 
-
-| 0                 | 1   | 2   | 3 (k-per-col = 3) | 4   | 5   | 6   | 7     | 8   | 9   |
-| ----------------- | --- | --- | ----------------- | --- | --- | --- | ----- | --- | --- |
-| 0                 |     |     |                   |     |     |     |       |     |     |
-| 1                 |     |     |                   |     |     |     |       |     |     |
-| 2                 |     |     | 🌊             |     |     |     |       |     |     |
-| 3                 |     |     |                   |     |     |     |       |     |     |
-| 4                 |     |     | ⚫              |     |     |     |       |     |     |
+| 0                 | 1   | 2   | 3 (k-per-col = 3) | 4   | 5   | 6   | 7   | 8   | 9   |
+| ----------------- | --- | --- | ----------------- | --- | --- | --- | --- | --- | --- |
+| 0                 |     |     |                   |     |     |     |     |     |     |
+| 1                 |     |     |                   |     |     |     |     |     |     |
+| 2                 |     |     | 🌊               |     |     |     |     |     |     |
+| 3                 |     |     |                   |     |     |     |     |     |     |
+| 4                 |     |     | ⚫                |     |     |     |     |     |     |
 | 5 (k-per-row = 3) |     |     | $C_{5,2}$         |     | ⚫  |     | 🌊 |     |     |
-| 6                 |     |     |                   |     |     |     |       |     |     |
-| 7                 |     |     |                   |     |     |     |       |     |     |
-| 8                 |     |     | 🌊             |     |     |     |       |     |     |
-| 9                 |     |     |                   |     |     |     |       |     |     |
+| 6                 |     |     |                   |     |     |     |     |     |     |
+| 7                 |     |     |                   |     |     |     |     |     |     |
+| 8                 |     |     | 🌊               |     |     |     |     |     |     |
+| 9                 |     |     |                   |     |     |     |     |     |     |
 
 In questo esempio abbiamo che la probabilitá di $C_{5,2}$ di contenere una barca é:
 
 $$
 \bold{P}(C_{5,2} \neq \text{water}) = \frac{(3 + 3) - (1 + 1)}{19 - (2 + 3)} = \frac{4}{14} = .2857 = 28.57\%
 $$
+
+Una volta determinata la probabilitá, se il sistema non ha altre informazioni note, esso procede a fare delle fire sulla cella piú probabile.
+Se non dispone di fire, il sistema utilizza tutte le guess su ogni cella piú probabile.
+
+### Performance
+
+Evidenzio ora le prove che ho fatto: le scacchiere utilizzate e i relativi punteggi che il sistema esperto ha totalizzato su di esse.
+
+Scacchiera 1 (mapEnvironment1.clp): **Punteggio 280**
+![mapEnvironment1.clp](clips/battle-2023-2/mapEnvironment1.png)
+
+Scacchiera 2 (NoInformation.clp): **Punteggio 245**
+![NoInformation.clp](clips/battle-2023-2/NoInformation.png)
+
+Scacchiera 3 (Scattered.clp): **Punteggio 20**
+![Scattered.clp](clips/battle-2023-2/Scattered.png)
+
+### Considerazioni
+
+Come si puó vedere la strategia é **molto buona se si dispongono informazioni sulla posizione delle barche**.
+Il meccanismo della probabilitá **funziona bene su mappe in cui molte celle di una stessa riga o colonna sono occupate da barche**.
+Utilizzare la probabilitá **non fa molti punti se le navi sono molto ben spaziate tra loro** perché i valori di k-per-row e k-per-column sono simili tra loro.

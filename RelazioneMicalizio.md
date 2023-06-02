@@ -3,11 +3,10 @@
 Andrea Cacioli
 Matricola: 914501
 
-[TOC]
-
 ## Sistema Esperto per la battaglia navale in solitario
 
-In questo progetto é stato richiesto di scrivere un sistema esperto per la risoluzione del gioco della battaglia navale in CLIPS.
+In questo progetto é stato richiesto di scrivere un sistema esperto per la risoluzione del gioco della battaglia navale in **CLIPS**.
+
 Il gioco si gioca su una scacchiera 9x9 e all'inizio sono noti dei fatti relativi al numero di posizioni occupate da una nave in una riga e in una colonna (fatti k-per-row k-per-column).
 
 Inoltre in altre situazioni é possibile avere dei fatti noti a priori relativi alla posizione occupata da un pezzo di nave.
@@ -58,8 +57,11 @@ Se una fire va a buon fine in una delle due celle, si rimuove sia il fatto one-o
 ### Probabilitá
 
 **(KNOWN)** Siano $K_r$ e $K_c$ il conteggio delle celle che sono note contenere qualcosa rispettivamente nella riga $i$ e nella colonna $j$.
+
 **(BOATS)** Siano $B_r$ e $B_c$ il conteggio delle celle che sono note contenere dei pezzi di barca rispettivamente nella riga $i$ e nella colonna $j$.
+
 **(DISCOVERED)** Siano $D_r$ e $D_c$ il conteggio delle celle che sono giá state scoperte contenere dei pezzi di barca precedentemente dal programma rispettivamente nella riga $i$ e nella colonna $j$.
+
 Posso calcolare la probabilitá usando la definizione classica (casi favorevoli / casi totali)
 La probabilitá della cella $C_{i,j}$ di contenere una barca é la seguente:
 
@@ -67,23 +69,25 @@ $$
 \bold{P}(C_{i,j} \neq \text{water}) = \frac{(B_r + B_C) - (D_r + D_c)}{19 - (K_r + K_c)}
 $$
 
+\pagebreak
+
 #### Esempio
 
-⚫ = Barca nota
-🌊 = Acqua nota
+B = Barca nota
+W = Acqua nota
 
-| 0                 | 1   | 2   | 3 (k-per-col = 3) | 4   | 5   | 6   | 7   | 8   | 9   |
-| ----------------- | --- | --- | ----------------- | --- | --- | --- | --- | --- | --- |
-| 0                 |     |     |                   |     |     |     |     |     |     |
-| 1                 |     |     |                   |     |     |     |     |     |     |
-| 2                 |     |     | 🌊               |     |     |     |     |     |     |
-| 3                 |     |     |                   |     |     |     |     |     |     |
-| 4                 |     |     | ⚫                |     |     |     |     |     |     |
-| 5 (k-per-row = 3) |     |     | $C_{5,2}$         |     | ⚫  |     | 🌊 |     |     |
-| 6                 |     |     |                   |     |     |     |     |     |     |
-| 7                 |     |     |                   |     |     |     |     |     |     |
-| 8                 |     |     | 🌊               |     |     |     |     |     |     |
-| 9                 |     |     |                   |     |     |     |     |     |     |
+| 0         | 1   | 2   | 3 (k = 3) | 4   | 5   | 6   | 7   | 8   | 9   |
+| --------- | --- | --- | --------- | --- | --- | --- | --- | --- | --- |
+| 0         |     |     |           |     |     |     |     |     |     |
+| 1         |     |     |           |     |     |     |     |     |     |
+| 2         |     |     | W         |     |     |     |     |     |     |
+| 3         |     |     |           |     |     |     |     |     |     |
+| 4         |     |     | B         |     |     |     |     |     |     |
+| 5 (k = 3) |     |     | $C_{5,2}$ |     | B   |     | W   |     |     |
+| 6         |     |     |           |     |     |     |     |     |     |
+| 7         |     |     |           |     |     |     |     |     |     |
+| 8         |     |     | W         |     |     |     |     |     |     |
+| 9         |     |     |           |     |     |     |     |     |     |
 
 In questo esempio abbiamo che la probabilitá di $C_{5,2}$ di contenere una barca é:
 
@@ -92,6 +96,7 @@ $$
 $$
 
 Una volta determinata la probabilitá, se il sistema non ha altre informazioni note, esso procede a fare delle fire sulla cella piú probabile.
+
 Se non dispone di fire, il sistema utilizza tutte le guess su ogni cella piú probabile.
 
 ### Performance
@@ -99,16 +104,19 @@ Se non dispone di fire, il sistema utilizza tutte le guess su ogni cella piú pr
 Evidenzio ora le prove che ho fatto: le scacchiere utilizzate e i relativi punteggi che il sistema esperto ha totalizzato su di esse.
 
 Scacchiera 1 (mapEnvironment1.clp): **Punteggio 280**
+
 ![mapEnvironment1.clp](clips/battle-2023-2/mapEnvironment1.png)
 
 Scacchiera 2 (NoInformation.clp): **Punteggio 245**
+
 ![NoInformation.clp](clips/battle-2023-2/NoInformation.png)
 
 Scacchiera 3 (Scattered.clp): **Punteggio 20**
+
 ![Scattered.clp](clips/battle-2023-2/Scattered.png)
 
 ### Considerazioni
 
-Come si puó vedere la strategia é **molto buona se si dispongono informazioni sulla posizione delle barche**.
-Il meccanismo della probabilitá **funziona bene su mappe in cui molte celle di una stessa riga o colonna sono occupate da barche**.
-Utilizzare la probabilitá **non fa molti punti se le navi sono molto ben spaziate tra loro** perché i valori di k-per-row e k-per-column sono simili tra loro.
+- Come si puó vedere la strategia é **molto buona se si dispongono informazioni sulla posizione delle barche**.
+- Il meccanismo della probabilitá **funziona bene su mappe in cui molte celle di una stessa riga o colonna sono occupate da barche**.
+- Utilizzare la probabilitá **non fa molti punti se le navi sono molto ben spaziate tra loro** perché i valori di k-per-row e k-per-column sono simili tra loro.

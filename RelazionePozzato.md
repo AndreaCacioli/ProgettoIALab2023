@@ -42,6 +42,10 @@ In questa prima fase si é sperimentato l'utilizzo del paradigma di programmazio
 
 ![easy25x25.pl](prolog/easy25x25.png)
 
+- MultipleExits.pl: labirinto con numerose uscite
+
+![MultipleExits.pl](prolog/MultipleExits.png)
+
 #### File Benchmarker
 
 Tale file serve solamente a provare le varie strategie su un labirinto precedentemente specificato.
@@ -73,14 +77,15 @@ Tabella dei test effettuati:
 I = Instantaneous (probably 10 to 20 milliseconds)
 DNF = Did Not Finish
 
-| Labirinto   | A*      | Ampiezza | Iterative Deepening (MaxProf) | Profonditá |
-| ----------- | ------- | -------- | ----------------------------- | ---------- |
-| lab1        | I       | I        | I (16)                        | I          |
-| zigzag15x15 | I       | I        | I (126)                       | I          |
-| easy17x17   | I       | I        | I (25)                        | I          |
-| easy25x25   | I       | 390 ms   | 51.313 s (98)                 | 15 ms      |
-| hard15x15   | I       | 47       | 22.297 s (28)                 | I          |
-| hard20x20   | 1.906 s | 67.188 s | DNF (> 3h) (33)               | 6.078 s    |
+| Labirinto      | A*      | Ampiezza | Iterative Deepening (MaxProf) | Profonditá |
+| -------------- | ------- | -------- | ----------------------------- | ---------- |
+| lab1           | I       | I        | I (16)                        | I          |
+| zigzag15x15    | I       | I        | I (126)                       | I          |
+| easy17x17      | I       | I        | I (25)                        | I          |
+| easy25x25      | I       | 390 ms   | 51.313 s (98)                 | 15 ms      |
+| hard15x15      | I       | 47       | 22.297 s (28)                 | I          |
+| hard20x20      | 1.906 s | 67.188 s | DNF (> 3h) (33)               | 6.078 s    |
+| Multiple Exits | 5 ms    | 27.449 s | 612.5 s (27)                  | 1 ms       |
 
 ##### Osservazioni
 
@@ -209,7 +214,6 @@ Il metodo 2, sebbene piú leggibile, é notevolmente piú lento del metodo 1. Pe
 
 Il tempo di esecuzione sulla mia macchina é il seguente
 DNF = Did Not Finish
-DNT = Did Not Try
 
 | Dimensione Campionato | Numero squadre che condividono lo stadio | numero di Thread | Tempo di Esecuzione |
 | --------------------- | ---------------------------------------- | ---------------- | ------------------- |

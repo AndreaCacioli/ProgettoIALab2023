@@ -37,4 +37,27 @@ Qui la scelta dell'operatore all'inizio é casuale (numeric indifferent) dopodic
 
 Qui la scelta dell'operatore all'inizio é casuale (numeric indifferent) dopodiché la scelta é presa grazie al reinforcement learning.
 
-## 
+## Ulteriori Operatori
+
+Il robot dispone di altri due operatori: uno per costruire la torre e uno per arrampicarsi sulla torre e scappare.
+
+## Perfomance
+
+In questa sezione verrá analizzato il numero di passi medio che impiega l'agente a imparare i rinforzi.
+
+| Valore di epsilon | numero di esecuzioni | valore di stabilitá |
+| ----------------- | -------------------- | ------------------- |
+| default (0.1)     | 1                    | 8                   |
+| 0.3               | 2                    | 8                   |
+| 0.5               | 2                    | 8                   |
+| 0.9               | 3                    | 8                   |
+
+## Osservazioni
+
+**Attenzione**: Sotto il campo Numero di Esecuzioni é inteso come caso peggiore perché in realtá spesso se l'agente azzecca subito l'operazione giusta, esso tende a continuare per quella strada.
+
+### Lavoro futuro
+
+Sarebbe interessante vedere fino a dove si puó spingere il meccanismo del RL provando a eliminare ogni tipo di conoscenza del mondo eccetto che per i meccanismi di RL per vedere come un agente complesso impara in maniera completamente behaviouristica.
+
+Sarebbe interessante capire se tali "pesi" imparati possono essere utilizzati per task piú complessi ed eventualmente passati di generazione in generazione aggiungendo delle mutazioni in stile algoritmo genetico.
